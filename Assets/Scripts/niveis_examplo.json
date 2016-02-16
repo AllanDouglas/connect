@@ -1,0 +1,33 @@
+/**
+1. amarelo
+2. vermelho
+3. verde
+4. rosa
+5. azul
+**/
+[
+	{ 
+		id: 1, // identificador do nivel
+		
+		// definimos as metas para as cores que queremos
+		// uma posicao para cada cor
+		metas :[
+			{
+				// id do contador (reservatorio)
+				contador_id:1,
+				// caso queremos apenas que que não 
+				// seja estrapolado a maxima setamos minima em 0
+				// nos casos de range será contatdo apenas no final de todas as chances
+				// caso o objetivo seja coletar uma quantidade exata, minima e maxima devem ser iguais
+				// no caso de apenas a maxima ser definida o callback é chamado assim que atingido
+				minima: 20,
+				maxima: 30,
+				//tipo: "CLASSIFICATORIA", // tipo da meta, ELIMINATORIA, CLASSIFICATORIA
+			}
+		],
+		// quantidade de pontos totais para atingir, 
+		// deve ser colocado apenas nos casos de todas as metas serem eliminatoria		
+		objetivo: 300,
+		chances: 20, // quantidade de chances que o jogador terá para completar o nivel
+	}
+]

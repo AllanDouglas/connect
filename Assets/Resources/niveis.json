@@ -1,0 +1,116 @@
+[
+	{
+	"id": 1,
+	"metas":
+		[
+		{
+			"contador_id":1,
+			"minima": 10,
+			"maxima": 15
+		},
+		{
+			"contador_id":2,
+			"minima": 10,
+			"maxima": 12
+		}
+		],
+		"tabuleiro":2,	
+		"objetivo": 300,
+		"chances": 20
+	},
+		{
+	"id": 2,
+	"metas":
+		[
+		{
+			"contador_id":1,
+			"minima": 10,
+			"maxima": 15
+		},
+		{
+			"contador_id":2,
+			"minima": 10,
+			"maxima": 12
+		}
+		],
+		"tabuleiro":2,	
+		"objetivo": 300,
+		"chances": 20
+	},
+		{
+	"id": 3,
+	"metas":
+		[
+		{
+			"contador_id":1,
+			"minima": 10,
+			"maxima": 15
+		},
+		{
+			"contador_id":2,
+			"minima": 10,
+			"maxima": 12
+		}
+		],
+		"tabuleiro":2,	
+		"objetivo": 300,
+		"chances": 20
+	},
+		{
+	"id": 4,
+	"metas":
+		[
+		{
+			"contador_id":1,
+			"minima": 10,
+			"maxima": 15
+		},
+		{
+			"contador_id":2,
+			"minima": 10,
+			"maxima": 12
+		}
+		],
+		"tabuleiro":2,	
+		"objetivo": 300,
+		"chances": 20
+	},
+		{
+	"id": 5,
+	"metas":
+		[
+		{
+			"contador_id":1,
+			"minima": 10,
+			"maxima": 15
+		},
+		{
+			"contador_id":2,
+			"minima": 10,
+			"maxima": 12
+		}
+		],
+		"tabuleiro":2,	
+		"objetivo": 300,
+		"chances": 20
+	},
+		{
+	"id": 6,
+	"metas":
+		[
+		{
+			"contador_id":1,
+			"minima": 10,
+			"maxima": 15
+		},
+		{
+			"contador_id":2,
+			"minima": 10,
+			"maxima": 12
+		}
+		],
+		"tabuleiro":2,	
+		"objetivo": 300,
+		"chances": 20
+	},
+]
