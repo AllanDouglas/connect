@@ -72,6 +72,10 @@ public class LevelBehaviourScript : MonoBehaviour
     //trata dos eventos de cliques 
     private void PecaClickHandler(PecaBehaviourScript peca)
     {
+
+        //verifica se o jogo está ativo
+        if (!_jogando) return;
+
         //verifica se a peca já está dentro das pecas selecionadas 
         if (!_pecasSelecionadas.Contains(peca))
         {
@@ -240,6 +244,8 @@ public class LevelBehaviourScript : MonoBehaviour
     // lugar onde é removido as peças seleciodas
     private void ToqueLiberadoHandler()
     {
+        //verifica se o jogo está ativo
+        if (!_jogando) return;
 
         //verifica a quantidade de pecas ativas, ser for maior que 1 
         if (_pecasSelecionadas.Count > 1)
@@ -535,7 +541,8 @@ public class LevelBehaviourScript : MonoBehaviour
     {
 
     }
-
+    
+    // antes de destruir o nivel
     public void OnDestroy()
     {
         // reseta os eventos
