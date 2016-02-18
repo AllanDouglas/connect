@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AjudasBehaviourScript : MonoBehaviour {
+public class AjudasHelperBehaviourScript : MonoBehaviour {
 
 
     public enum Ajudas {

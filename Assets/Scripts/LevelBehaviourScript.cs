@@ -15,6 +15,10 @@ public class LevelBehaviourScript : MonoBehaviour
 
     //caminhos para os recursos 
     private const string PADRAO = "Prefabs/padrao/";
+
+    [Header("Objeto pai das pecas")]
+    public Transform tabuleiro;
+
     [Header("Interface de GameOver")]
     public GameOverBehaviourScript GameOverUI;
 
@@ -429,7 +433,7 @@ public class LevelBehaviourScript : MonoBehaviour
                 _dotsAtivas.Add(peca);
                 //remove a lista de poll
                 _dotsPool.Remove(peca);
-                peca.transform.parent = transform;
+                peca.transform.parent = tabuleiro;
                 //peca.gameObject.name = string.Format
                 peca.transform.position = new Vector2(x * ESPACAMENTO_ENTRE_PECAS, y * ESPACAMENTO_ENTRE_PECAS);
                 peca.SetPosicao(x, y);
@@ -535,13 +539,64 @@ public class LevelBehaviourScript : MonoBehaviour
     {
         CarregarRecursos(PADRAO);
     }
+    // usa a ajuda do tipo misturar
+    public void Misturar()
+    {
+        // verifica se ainda existem ajudas para ser usadas
+        if (AjudasHelperBehaviourScript.Misturar() > 0 | true)
+        {
+            // remove uma ajuda
+            AjudasHelperBehaviourScript.Misturar(-1);
+            // executa a animação 
+
+            // mistura o tabuleiro
+            MisturaItens();
+        }
+
+
+    }
+
+    // mistura as pecas do grid
+    private void MisturaItens() {
+
+        // varrendo as colunas
+        for(int x = 0; x < _colunas; x++)
+        {
+            // varrendo as linhas
+            for(int y =0; y < _linhas; y++)
+            {
+                // randomiza uma posicao nova
+                int novoX = UnityEngine.Random.Range(0,_colunas-1);
+                int novoY = UnityEngine.Random.Range(0, _linhas - 1);
+
+                //peca atual
+                PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
+                //peca randomizada
+                PecaBehaviourScript pecaRandomizada = _tabuleiro[novoX, novoY];
+
+                // a peça atual fica no lugar da randomizada 
+                _tabuleiro[novoX, novoY] = pecaAtual;
+                pecaAtual.SetPosicao(novoX,novoY);
+                // a peça da posicao randomizada fica no lugar do da peca atual
+                _tabuleiro[x, y] = pecaRandomizada;
+                pecaRandomizada.SetPosicao(x,y);
+                // troca a posicao 
+                Vector3 novaPosicao = pecaRandomizada.transform.position; // guarda a posicao da peca randomizada
+                pecaRandomizada.transform.position = pecaAtual.transform.position; // peca randomizada fica no lugar da peca de 
+                pecaAtual.transform.position = novaPosicao; // peca atual fica no lugar da peca randomizada
+
+            }
+        }
+        
+
+    }
 
     // Update is called once per frame
     void Update()
     {
 
     }
-    
+
     // antes de destruir o nivel
     public void OnDestroy()
     {
