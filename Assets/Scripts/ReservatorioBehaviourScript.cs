@@ -66,20 +66,22 @@ public class ReservatorioBehaviourScript : MonoBehaviour
         if (_valorAtual >= metaMinima & _valorAtual <= metaMaxima & !_metaAtingida)
         {
             _metaAtingida = true;
-             Debug.Log("### Meta Atingida ###");
-            MetaAtingida(this);
+			if(MetaAtingida != null) 
+            	MetaAtingida(this);
         }
         else
         // verifica se esta exatamente no valor maximo
         if (_valorAtual == metaMaxima & !_metaUltrapassada)
         {
             _metaUltrapassada = true;
-            ValorMaximoAtingido(this);
+			if(ValorMaximoAtingido != null)
+            	ValorMaximoAtingido(this);
         }
         //verifica se o valor maximo da meta foi ultrapassada
         else if (_valorAtual > metaMaxima)
         {
-            MetaUltrapassada(this);
+			if(MetaUltrapassada != null)
+            	MetaUltrapassada(this);
         }
 
     }

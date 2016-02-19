@@ -415,7 +415,8 @@ public class LevelBehaviourScript : MonoBehaviour
         TouchBehaviourScript.ToqueLiberado += ToqueLiberadoHandler;
 
         ReservatorioBehaviourScript.MetaAtingida += MetaAtingida;
-        ReservatorioBehaviourScript.MetaUltrapassada += MetaUltrapassada;
+		ReservatorioBehaviourScript.MetaUltrapassada += MetaUltrapassada;
+		ReservatorioBehaviourScript.ValorMaximoAtingido += MetaUltrapassada;
 
         //carregando os recursos
         CarregarRecursos();
@@ -454,8 +455,6 @@ public class LevelBehaviourScript : MonoBehaviour
         for (int i = 0; i < _dotsPrefabs.Length; i++)
         {
             //para cada tipo de dot colocamos um reservatorio
-
-
 
             for (int j = 0; j < 10; j++)
             {
@@ -543,10 +542,10 @@ public class LevelBehaviourScript : MonoBehaviour
     public void Misturar()
     {
         // verifica se ainda existem ajudas para ser usadas
-        if (AjudasHelperBehaviourScript.Misturar() > 0 | true)
+        if (AjudasHelper.Misturar() > 0 )
         {
             // remove uma ajuda
-            AjudasHelperBehaviourScript.Misturar(-1);
+            AjudasHelper.Misturar(-1);
             // executa a animação 
 
             // mistura o tabuleiro
@@ -555,9 +554,84 @@ public class LevelBehaviourScript : MonoBehaviour
 
 
     }
+	// almenta a quantidade de chances restantes
+	public void MaisCinco()
+	{
+		// verific se ainda tem chances
+		if( AjudasHelper.MaisCinco() <= 0) return;
+		// remove uma chance
+		AjudasHelper.MaisCinco(-1);
+		// executa a animação
+
+		// adiciona mais cinco
+		_chances += 5;
+		// atualiza a label
+		chances.text = _chances.ToString();
+
+	}
+
+	// remove 5 pecas aleatorias 
+	public void Sorte()
+	{
+		// verific se ainda tem chances
+		//if( AjudasHelper.Sortes() <= 0) return;
+		// remove uma chance
+		AjudasHelper.Sortes(-1);
+		// executa a animação
+
+		// sorteia cinco posicoes aleatorias
+		PecaBehaviourScript [] pecasEscolhidas = new PecaBehaviourScript[5];
+
+		int index = 0;
+		while(index < 5)
+		{
+			
+			// randomiza o x
+			int x = UnityEngine.Random.Range(0,_colunas -1);
+			// randomixa o y
+			int y = UnityEngine.Random.Range(0,_linhas -1);
+			//recupera a pecas randomizada
+			PecaBehaviourScript pecaEscolhida = _tabuleiro [x, y];
+
+			Debug.Log (pecaEscolhida);
+
+			for(int i = 0; i < pecasEscolhidas.Length; i++ )
+			{
+				
+				if (pecasEscolhidas[i] == pecaEscolhida)
+					break;
+				pecasEscolhidas [index] = pecaEscolhida;
+
+				//incremeta o contador
+				index++;
+				break;
+			}
+			
+		}
+	
+		foreach (PecaBehaviourScript peca in pecasEscolhidas)
+		{
+			
+			//remove cada peca do tabuleiro
+			_tabuleiro[peca.x, peca.y] = null;
+			//remove das pecas ativas                
+			_dotsAtivas.Remove(peca);
+			//adiciona as pecas 
+			_dotsPool.Add(peca);
+			peca.Sair(); // retira a peca do tabuleiro                
+
+		}
+
+		RePosicionar();// reposiciona as pecas do tabuleiro 
+		RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
+	
+	}
+		
+
 
     // mistura as pecas do grid
-    private void MisturaItens() {
+    private void MisturaItens() 
+	{
 
         // varrendo as colunas
         for(int x = 0; x < _colunas; x++)
@@ -586,8 +660,7 @@ public class LevelBehaviourScript : MonoBehaviour
                 pecaAtual.transform.position = novaPosicao; // peca atual fica no lugar da peca randomizada
 
             }
-        }
-        
+        }        
 
     }
 
@@ -601,12 +674,11 @@ public class LevelBehaviourScript : MonoBehaviour
     public void OnDestroy()
     {
         // reseta os eventos
-        //configura eventos
         TouchBehaviourScript.PecaTocada -= PecaClickHandler;
         TouchBehaviourScript.ToqueLiberado -= ToqueLiberadoHandler;
-
         ReservatorioBehaviourScript.MetaAtingida -= MetaAtingida;
         ReservatorioBehaviourScript.MetaUltrapassada -= MetaUltrapassada;
+		ReservatorioBehaviourScript.ValorMaximoAtingido -= MetaUltrapassada;
     }
 
     
