@@ -17,7 +17,7 @@ public class PecaBehaviourScript : MonoBehaviour
     public SpriteRenderer sprite;
     [Header("Identificador único da peca")]
     public int id;
-    //[Header("Rotulo mostrando o tipo da peca")]
+	//[Header("Rotulo mostrando o tipo da peca")]
     //public TextMesh label; // label do tipo
     //[Header("Tipo da peca para contagem")]
     //public Tipo tipo;
@@ -63,10 +63,10 @@ public class PecaBehaviourScript : MonoBehaviour
 
     public void SetPosicao(int x, int y)
     {
-        this.x = x;
+		this.x = x;
         this.y = y;
         
-        gameObject.name = string.Format("Peca ({0},{1})", x, y);        
+        gameObject.name = string.Format("({0},{1})", x, y);        
         _linha.enabled = true;
 
     }
@@ -95,10 +95,15 @@ public class PecaBehaviourScript : MonoBehaviour
         _linha.SetVertexCount(0);
         _linha.enabled = false;
         gameObject.name = "desativada"; // deve ser removido para o metodo da classe Peca
-        gameObject.SetActive(false); // teste
+		gameObject.SetActive(false);
+    
     }
 
-    // Use this for initialization
+	private void Desativar(){
+		gameObject.SetActive(false);
+	}
+
+	// Use this for initialization
     void Start()
     {
         //configura a camada da peca

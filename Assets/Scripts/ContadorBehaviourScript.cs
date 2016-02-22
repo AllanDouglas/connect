@@ -2,11 +2,11 @@
 using UnityEngine.UI;
 
 
-public class ReservatorioBehaviourScript : MonoBehaviour
+public class ContadorBehaviourScript : MonoBehaviour
 {
 
     /** Eventos **/
-    public delegate void RepositorioEvento(ReservatorioBehaviourScript contador);
+    public delegate void RepositorioEvento(ContadorBehaviourScript contador);
     //diparado quanto o reservatorio entra no range
     public static event RepositorioEvento MetaAtingida;
     //dispara quando a meta e extrapolada
@@ -37,8 +37,11 @@ public class ReservatorioBehaviourScript : MonoBehaviour
     public Slider contador;
     // cor do preenchimento
     public Color cor;
+	public Color corDoBackground;
     // marca da cor dor reservatorio
     public Image marcador;
+	public Image background;
+	public Sprite metaUltrapassada;
     //labels
     public Text quantidadeAtual;
     public Text meta;
@@ -79,7 +82,9 @@ public class ReservatorioBehaviourScript : MonoBehaviour
         }
         //verifica se o valor maximo da meta foi ultrapassada
         else if (_valorAtual > metaMaxima)
-        {
+        {		
+			this.background.sprite = metaUltrapassada;	
+				
 			if(MetaUltrapassada != null)
             	MetaUltrapassada(this);
         }
@@ -113,36 +118,37 @@ public class ReservatorioBehaviourScript : MonoBehaviour
         this.contador.fillRect.gameObject.GetComponent<Image>().color = cor;
         
         // define a cor do marcador
-        this.marcador.color = cor;
-
-
+		if(marcador != null)
+        	this.marcador.color = cor;
+		
         //verifica se o reservatorio é por meta ou valor maximo
-        if (metaMinima > 0 & metaMaxima > 0)
+        if (metaMinima >= 0 & metaMaxima > 0)
         {          
             this._verificacaoPorRange = true;
-            meta.text = metaMinima.ToString() +" - "+metaMaxima.ToString();
+			//metaMinima.ToString() +
+			meta.text = metaMinima.ToString()+"|"+metaMaxima.ToString();
         }
         else if (metaMaxima > 0)
         {
-           
             this._verificacaoPorRange = false;
-            meta.text = metaMaxima.ToString();
+			meta.text = "/"+metaMaxima.ToString();
         }
         //configura os textos
         quantidadeAtual.text = valorInicial.ToString();
-        Debug.Log(meta.text);
+
     } 
 
     // Use this for initialization
     void Start()
     {
-        meta.text = "";
+        //meta.text = "";
         quantidadeAtual.text = "0";
 
         this.contador.value = 0;
         
         // define a cor do slider
         this.contador.fillRect.gameObject.GetComponent<Image>().color = cor;
+		this.background.color = corDoBackground;
     }
 
     void Update()

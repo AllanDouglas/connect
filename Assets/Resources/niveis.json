@@ -3,114 +3,58 @@
 	"id": 1,
 	"metas":
 		[
-		{
-			"contador_id":1,
-			"minima": 10,
-			"maxima": 15
-		},
-		{
-			"contador_id":2,
-			"minima": 10,
-			"maxima": 12
-		}
+			{
+				"contador_id":1,
+				"minima": 10,
+				"maxima": 12
+			},
+			{
+				"contador_id":2,
+				"minima": 10,
+				"maxima": 12
+			},
+			{
+				"contador_id":3,
+				"minima": 10,
+				"maxima": 12
+			},
+			{
+				"contador_id":5,
+				"minima": 10,
+				"maxima": 12
+			}		
 		],
 		"tabuleiro":2,	
-		"objetivo": 300,
+		"objetivo": 500,
 		"chances": 20
 	},
-		{
-	"id": 2,
+	{
+	"id": 1,
 	"metas":
 		[
-		{
-			"contador_id":1,
-			"minima": 10,
-			"maxima": 15
-		},
-		{
-			"contador_id":2,
-			"minima": 10,
-			"maxima": 12
-		}
+			{
+				"contador_id":1,
+				"minima": 14,
+				"maxima": 16
+			},
+			{
+				"contador_id":2,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":3,
+				"minima": 26,
+				"maxima": 30
+			},
+			{
+				"contador_id":5,
+				"minima": 26,
+				"maxima": 30
+			}		
 		],
-		"tabuleiro":2,	
-		"objetivo": 300,
-		"chances": 20
-	},
-		{
-	"id": 3,
-	"metas":
-		[
-		{
-			"contador_id":1,
-			"minima": 10,
-			"maxima": 15
-		},
-		{
-			"contador_id":2,
-			"minima": 10,
-			"maxima": 12
-		}
-		],
-		"tabuleiro":2,	
-		"objetivo": 300,
-		"chances": 20
-	},
-		{
-	"id": 4,
-	"metas":
-		[
-		{
-			"contador_id":1,
-			"minima": 10,
-			"maxima": 15
-		},
-		{
-			"contador_id":2,
-			"minima": 10,
-			"maxima": 12
-		}
-		],
-		"tabuleiro":2,	
-		"objetivo": 300,
-		"chances": 20
-	},
-		{
-	"id": 5,
-	"metas":
-		[
-		{
-			"contador_id":1,
-			"minima": 10,
-			"maxima": 15
-		},
-		{
-			"contador_id":2,
-			"minima": 10,
-			"maxima": 12
-		}
-		],
-		"tabuleiro":2,	
-		"objetivo": 300,
-		"chances": 20
-	},
-		{
-	"id": 6,
-	"metas":
-		[
-		{
-			"contador_id":1,
-			"minima": 10,
-			"maxima": 15
-		},
-		{
-			"contador_id":2,
-			"minima": 10,
-			"maxima": 12
-		}
-		],
-		"tabuleiro":2,	
-		"objetivo": 300,
-		"chances": 20
-	},
+		"tabuleiro":3,	
+		"objetivo": 1000,
+		"chances": 40
+	}
 ]

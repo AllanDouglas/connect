@@ -25,27 +25,36 @@ public class LevelBehaviourScript : MonoBehaviour
     [Header("Interface de Pause")]
     public PauseGameBehaviourScript PauseUI;
 
+	[Header("Interface de Level Clear")]
+	public ClearLevelBehaviourScript LevelClearUI;
+
     [Header("Linha de seleção")]
     public LineRenderer _linha; // linha que vai ligar 
 
     [Header("Reservatorios")]
-    public ReservatorioBehaviourScript[] reservatorios;
+    public ContadorBehaviourScript[] reservatorios;
 
     [Header("Lables")]
     public Text pontos;
     public Text chances;
 
     //Grid
+
+	private TabuleiroScript _Tabuleiro = new TabuleiroScript(); // script do tabuleiro
+
     private PecaBehaviourScript[] _dotsPrefabs; // lista de prefabs dos circulos
-    private ReservatorioBehaviourScript _reservatorioPrefab; // prafab do reservatorio
-    private List<ReservatorioBehaviourScript> _listaDeReservatoriosAtivos = new List<ReservatorioBehaviourScript>(); // lista dos reservatorios
-    private List<PecaBehaviourScript> _dotsPool; //pool de dotos
+    private ContadorBehaviourScript _reservatorioPrefab; // prafab do reservatorio
+	private ParticleSystem _particulaPrefab; // prafab da particula
+
+	private List<ParticleSystem> _particulasDeSaida = new List<ParticleSystem>() ; // pool de particulas de saida
+    private List<ContadorBehaviourScript> _listaDeReservatoriosAtivos = new List<ContadorBehaviourScript>(); // lista dos reservatorios
+    //private List<PecaBehaviourScript> _dotsPool; //pool de dotos
     private List<PecaBehaviourScript> _dotsAtivas = new List<PecaBehaviourScript>(); // pecas que estão no grid
-    private PecaBehaviourScript[,] _tabuleiro; // tabuleiro
+    //private PecaBehaviourScript[,] _tabuleiro; // tabuleiro
     private List<PecaBehaviourScript> _pecasSelecionadas = new List<PecaBehaviourScript>(); // pecas que foram tocadas
     private Color _corDaLinha; // cor da linha        
-    private int _colunas;
-    private int _linhas;
+    private int _colunas; // quantidade de colunas
+    private int _linhas; // quantidade de linhas
 
     //Nivel
     private float _objetivo = 0; // quantidade de pontos que devem ser atingidos para passar do nivel
@@ -150,7 +159,7 @@ public class LevelBehaviourScript : MonoBehaviour
     {
 
         //desativa todos os contadores
-        foreach(ReservatorioBehaviourScript contador in reservatorios)
+        foreach(ContadorBehaviourScript contador in reservatorios)
         {
             contador.gameObject.SetActive(false);
         }
@@ -165,9 +174,11 @@ public class LevelBehaviourScript : MonoBehaviour
 
         // aqui tem que ser recuperado o nivel selecionado para buscar no array 
         // a posicao do array é igual ao nivel -1 para corresponder ao array
-        // para fim de testes uzarei a posicao 0
+        // para fim de testes uzarei a posicao 0 iremos sortear o nivel
 
-        Hashtable nivel = niveis[0] as Hashtable;
+		int index = UnityEngine.Random.Range (0, niveis.Count);
+
+        Hashtable nivel = niveis[index] as Hashtable;
         // chances de objetivo
         _chances = (float)nivel["chances"];
         _objetivo = (float)nivel["objetivo"];
@@ -196,23 +207,23 @@ public class LevelBehaviourScript : MonoBehaviour
 
         // metas 
         ArrayList metas = nivel["metas"] as ArrayList;
+
         if (metas.Count > 0)
         {
             this._metas = metas.Count; // quantidade de metas que devem ser batidas
 
             Hashtable meta; // meta atual do nivel selecionado
-            ReservatorioBehaviourScript reservatorio = null; // resevatorio que será selecionado
+            ContadorBehaviourScript reservatorio = null; // resevatorio que será selecionado
             for (int i = 0; i < _metas; i++) // para cada meta ativo um contado
             {
                 meta = metas[i] as Hashtable; // captura a meta atual
-                //procura o contador correpondente
-
-                foreach (ReservatorioBehaviourScript contador in reservatorios)
+				//procura o contador correpondente
+                foreach (ContadorBehaviourScript contador in reservatorios)
                 {
                     float contadorId = (float)meta["contador_id"];
                     if (contador.id == (int)contadorId)
                     {
-                        reservatorio = contador; // selecionamos o contador
+						reservatorio = contador; // selecionamos o contador
                         break;
                     }
                 }
@@ -232,13 +243,22 @@ public class LevelBehaviourScript : MonoBehaviour
     // pontua
     private void Pontuar(int quantidade)
     {
+		// adiciona a quantidade de pontos
         _pontos += (quantidade * 10);
+		// pega a quantidade de pontos diferenção de 3
+		if (quantidade > 3) {
+			int extraPontos = quantidade - 3;
+			extraPontos *= 10;
+			// adiciona os pontos extras
+			_pontos += extraPontos;
+		}
+
         pontos.text = _pontos.ToString()+" /"+_objetivo.ToString();
 
         // verifica se a pontuação foi suficiante para atingir os objetivos
         if (_pontos >= _objetivo & _metas == _metasAtingidas)
         {
-            GameOver();
+			LevelClear();
         }
 
 
@@ -257,8 +277,8 @@ public class LevelBehaviourScript : MonoBehaviour
             // pontua de acordo com a quantidade de pecas selecionadas
             Pontuar(_pecasSelecionadas.Count);
             //procura o contador corespondente
-            ReservatorioBehaviourScript contador;
-            foreach (ReservatorioBehaviourScript reservatorio in _listaDeReservatoriosAtivos)
+            ContadorBehaviourScript contador;
+            foreach (ContadorBehaviourScript reservatorio in _listaDeReservatoriosAtivos)
             {
                 if (reservatorio.id == _pecasSelecionadas[0].id)
                 {
@@ -268,107 +288,48 @@ public class LevelBehaviourScript : MonoBehaviour
                 }
             }
 
+			// habilita uma nova 
+			int indexPeca = 0;
+			for (int i = 0; i < _pecasSelecionadas.Count; i++) {
 
-            foreach (PecaBehaviourScript peca in _pecasSelecionadas)
-            {
-                //remove cada peca do tabuleiro
-                _tabuleiro[peca.x, peca.y] = null;
-                //remove das pecas ativas                
-                _dotsAtivas.Remove(peca);
-                //adiciona as pecas 
-                _dotsPool.Add(peca);
-                peca.Sair(); // retira a peca do tabuleiro                
+				ParticleSystem particula = _particulasDeSaida [i];
+				particula.gameObject.SetActive (false);
 
-            }
 
+				PecaBehaviourScript peca = _pecasSelecionadas [indexPeca];
+				particula.transform.position = peca.transform.position;
+				particula.startColor = peca.cor;
+				particula.gameObject.SetActive (true);
+				indexPeca++;
+
+			}
+			// remove as pecas do tabuleiro
+			_Tabuleiro.Remover (_pecasSelecionadas);
             // a cada combinação certa descontamos uma chance
             RemoverChance();
-
         }
         _pecasSelecionadas.Clear();// limpa lista     
-        RePosicionar();// reposiciona as pecas do tabuleiro 
-        RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
-        if (!VerificaPossibilidades()) Debug.Log("não existem nenhuma conexão possível");
+		_Tabuleiro.Reposicionar();
+		_Tabuleiro.Repreencher ();
+        //RePosicionar();// reposiciona as pecas do tabuleiro 
+        //RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
+		if (!_Tabuleiro.VerificaPossibilidades()) Debug.Log("não existem nenhuma conexão possível");
     }
-    //baixa as pecas 
-    private void RePosicionar()
-    {
-        //procura por pecas espacos nulos
-        for (int x = 0; x < _colunas; x++) //colunas
-        {
-            for (int y = 0; y < _linhas; y++)// linhas
-            {
-                //verifica se a posicao estfá vazia
-                if (_tabuleiro[x, y] == null)
-                {
-                    // baixa as pecas que estão a cima dela
-                    for (int j = y; j < _linhas; j++)
-                    {
-                        //verifica se é a ultima linha
-                        if (j == _linhas - 1)
-                        {
-                            // _tabuleiro[x, j] = null; // deixa a casa de cima nula para a entrada de nova peca
-                            break;
-                        }
-                        PecaBehaviourScript peca = _tabuleiro[x, j + 1];
-                        if (peca)// verifica se tem alguma peca acima
-                        { // quando encontra a primeira peca de cima vazia 
-                          //para a interação e deixa a posicao de cima vazia
-                            peca.SetPosicao(x, y);
-                            _tabuleiro[x, y] = peca; // coloca a peca de cima no local da peca vazia encontrada
-                            _tabuleiro[x, j + 1] = null; // a posicao de cima fica vazia 
-                            break;
-                        }// se não encontrar nenhuma acima dela para para a proxima
-                    }
-
-                }
-            }
-        }
-
-    }
-
-    // coloca as pecas que estão faltando no tabuleiro
-    private void RePreencher()
-    {
-        //preenchendo o tabuleiro
-        for (int x = 0; x < _colunas; x++)
-        {
-            for (int y = 0; y < _linhas; y++)
-            {
-                if (_tabuleiro[x, y] != null) continue;
-
-                PecaBehaviourScript peca = _dotsPool[UnityEngine.Random.Range(0, _dotsPool.Count)];
-                //adiciona a peca a lista de em uso
-                _dotsAtivas.Add(peca);
-                //remove a lista de poll
-                _dotsPool.Remove(peca);
-
-                peca.transform.parent = transform;
-                //peca.gameObject.name = string.Format
-                peca.transform.position = new Vector2(x * ESPACAMENTO_ENTRE_PECAS, y + 2);
-                peca.SetPosicao(x, y);
-                _tabuleiro[x, y] = peca;
-                peca.gameObject.SetActive(true);
-
-            }
-        }
-    }
+   
     // controla a quantidade de metas atingidas
-    private void MetaAtingida(ReservatorioBehaviourScript contador)
+    private void MetaAtingida(ContadorBehaviourScript contador)
     {
        
         _metasAtingidas++;
 
-        Debug.Log("### Quantidade de metas atingidas "+ _metasAtingidas);
-
         if(_metas == _metasAtingidas & _pontos >= _objetivo)
         {
-            GameOver();
+			LevelClear();
         }
 
     }
     // controla quando a meta é ultrapassada
-    private void MetaUltrapassada(ReservatorioBehaviourScript contador)
+    private void MetaUltrapassada(ContadorBehaviourScript contador)
     {
      
         GameOver();
@@ -379,6 +340,12 @@ public class LevelBehaviourScript : MonoBehaviour
     {
         GameOverUI.gameObject.SetActive(true);
     }
+
+	// level clear
+	private void LevelClear()
+	{
+		LevelClearUI.gameObject.SetActive (true);
+	}
 
     //pausa o game
     public void Pausar()
@@ -414,35 +381,28 @@ public class LevelBehaviourScript : MonoBehaviour
         TouchBehaviourScript.PecaTocada += PecaClickHandler;
         TouchBehaviourScript.ToqueLiberado += ToqueLiberadoHandler;
 
-        ReservatorioBehaviourScript.MetaAtingida += MetaAtingida;
-		ReservatorioBehaviourScript.MetaUltrapassada += MetaUltrapassada;
-		ReservatorioBehaviourScript.ValorMaximoAtingido += MetaUltrapassada;
+        ContadorBehaviourScript.MetaAtingida += MetaAtingida;
+		ContadorBehaviourScript.MetaUltrapassada += MetaUltrapassada;
+		ContadorBehaviourScript.ValorMaximoAtingido += MetaUltrapassada;
 
         //carregando os recursos
         CarregarRecursos();
         CarregarPool();
 
-        //montando o grid
-        _tabuleiro = new PecaBehaviourScript[_colunas, _linhas];
-        //preenchendo o tabuleiro
-        for (int x = 0; x < _colunas; x++)
-        {
-            for (int y = 0; y < _linhas; y++)
-            {
-                PecaBehaviourScript peca = _dotsPool[UnityEngine.Random.Range(0, _dotsPool.Count)];
-                //adiciona a peca a lista de em uso
-                _dotsAtivas.Add(peca);
-                //remove a lista de poll
-                _dotsPool.Remove(peca);
-                peca.transform.parent = tabuleiro;
-                //peca.gameObject.name = string.Format
-                peca.transform.position = new Vector2(x * ESPACAMENTO_ENTRE_PECAS, y * ESPACAMENTO_ENTRE_PECAS);
-                peca.SetPosicao(x, y);
-                _tabuleiro[x, y] = peca;
-                peca.gameObject.SetActive(true);
+		// alimenta o pool de particulas
+		for(int i = 0; i < 15; i++){
 
-            }
-        }
+			ParticleSystem particula = Instantiate (_particulaPrefab) as ParticleSystem;
+			particula.gameObject.SetActive (false);
+			_particulasDeSaida.Add (particula);
+
+		}
+
+
+		// preenche o tabuleiro
+		_Tabuleiro.transformPai = tabuleiro;
+		_Tabuleiro.Preencher (_colunas, _linhas);
+
     }
 
     //carrega o pool de peças do jogo
@@ -450,56 +410,21 @@ public class LevelBehaviourScript : MonoBehaviour
     {
         if (_dotsPrefabs.Length <= 0) throw new UnityException("recursos não carregados");
 
-        _dotsPool = new List<PecaBehaviourScript>();
-
         for (int i = 0; i < _dotsPrefabs.Length; i++)
         {
             //para cada tipo de dot colocamos um reservatorio
 
-            for (int j = 0; j < 10; j++)
+            for (int j = 0; j < 15; j++)
             {
                 PecaBehaviourScript peca = Instantiate(_dotsPrefabs[i]) as PecaBehaviourScript;
-                peca.transform.parent = transform;
+				peca.transform.parent = tabuleiro;
                 peca.gameObject.SetActive(false);
-                _dotsPool.Add(peca);
+                //_dotsPool.Add(peca);
+				_Tabuleiro.AdicionaPecasPool(peca);
 
             }
         }
 
-    }
-
-    //verifica se ainda existem chances de alguem se conectar
-    private bool VerificaPossibilidades()
-    {
-        for (int x = 0; x < _colunas; x++)
-        { // para cada coluna
-            for (int y = 0; y < _linhas; y++)
-            {// para cada linha
-                //verifica a peca de cima se for possivel
-                if (y + 1 < _linhas)
-                {
-                    // verifica se esta peca tem o mesmo tipo da peca de cima
-                    PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
-                    PecaBehaviourScript pecaDeCima = _tabuleiro[x, y + 1];
-
-                    if (pecaAtual.id == pecaDeCima.id) return true; // pecas iguais retornar true 
-
-                }
-                //verifica a peca da direita
-                if (x + 1 < _colunas)
-                {
-                    // verifica se esta peca tem o mesmo tipo da peca da direita
-                    PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
-                    PecaBehaviourScript pecaDaDireita = _tabuleiro[x + 1, y];
-
-                    if (pecaAtual.id == pecaDaDireita.id) return true; // pecas iguais retornar true 
-                }
-
-            }
-
-        }
-
-        return false; // não existe nenhuma possibilidade de conexão
     }
 
 
@@ -530,7 +455,8 @@ public class LevelBehaviourScript : MonoBehaviour
     private void CarregarRecursos(string caminho)
     {
         _dotsPrefabs = Resources.LoadAll<PecaBehaviourScript>(caminho + "circulos");
-        _reservatorioPrefab = Resources.Load<ReservatorioBehaviourScript>(caminho + "reservatorios/Reservatorio") as ReservatorioBehaviourScript;
+       // _reservatorioPrefab = Resources.Load<ContadorBehaviourScript>(caminho + "reservatorios/Reservatorio") as ContadorBehaviourScript;
+		_particulaPrefab = Resources.Load<ParticleSystem> (caminho + "particula/ParticulaSaida") as ParticleSystem;
     }
 
     //carrega os recursos padrao
@@ -542,14 +468,14 @@ public class LevelBehaviourScript : MonoBehaviour
     public void Misturar()
     {
         // verifica se ainda existem ajudas para ser usadas
-        if (AjudasHelper.Misturar() > 0 )
+        if (AjudasHelper.Misturar() > 0)
         {
             // remove uma ajuda
             AjudasHelper.Misturar(-1);
             // executa a animação 
 
             // mistura o tabuleiro
-            MisturaItens();
+			_Tabuleiro.Misturar();
         }
 
 
@@ -574,15 +500,18 @@ public class LevelBehaviourScript : MonoBehaviour
 	public void Sorte()
 	{
 		// verific se ainda tem chances
-		//if( AjudasHelper.Sortes() <= 0) return;
+		if( AjudasHelper.Sortes() <= 0) return;
 		// remove uma chance
 		AjudasHelper.Sortes(-1);
 		// executa a animação
 
 		// sorteia cinco posicoes aleatorias
-		PecaBehaviourScript [] pecasEscolhidas = new PecaBehaviourScript[5];
+		List<PecaBehaviourScript> pecasEscolhidas = new List<PecaBehaviourScript>();
 
 		int index = 0;
+
+		PecaBehaviourScript[,] tabuleiro = _Tabuleiro.Tabuleiro; // recupera o tabuleiro atual
+
 		while(index < 5)
 		{
 			
@@ -591,16 +520,14 @@ public class LevelBehaviourScript : MonoBehaviour
 			// randomixa o y
 			int y = UnityEngine.Random.Range(0,_linhas -1);
 			//recupera a pecas randomizada
-			PecaBehaviourScript pecaEscolhida = _tabuleiro [x, y];
+			PecaBehaviourScript pecaEscolhida = tabuleiro [x, y];
 
-			Debug.Log (pecaEscolhida);
-
-			for(int i = 0; i < pecasEscolhidas.Length; i++ )
+			for(int i = 0; i < 5; i++ )
 			{
 				
 				if (pecasEscolhidas[i] == pecaEscolhida)
 					break;
-				pecasEscolhidas [index] = pecaEscolhida;
+				pecasEscolhidas.Add(pecaEscolhida);
 
 				//incremeta o contador
 				index++;
@@ -608,61 +535,14 @@ public class LevelBehaviourScript : MonoBehaviour
 			}
 			
 		}
-	
-		foreach (PecaBehaviourScript peca in pecasEscolhidas)
-		{
-			
-			//remove cada peca do tabuleiro
-			_tabuleiro[peca.x, peca.y] = null;
-			//remove das pecas ativas                
-			_dotsAtivas.Remove(peca);
-			//adiciona as pecas 
-			_dotsPool.Add(peca);
-			peca.Sair(); // retira a peca do tabuleiro                
 
-		}
+		_Tabuleiro.Remover (pecasEscolhidas); // remove as pecas escolhidas do tabuleiro
 
-		RePosicionar();// reposiciona as pecas do tabuleiro 
-		RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
+		_Tabuleiro.Reposicionar();// reposiciona as pecas do tabuleiro 
+		_Tabuleiro.Repreencher(); // recoloca as pecas que estão faltando no tabuleiro
 	
 	}
 		
-
-
-    // mistura as pecas do grid
-    private void MisturaItens() 
-	{
-
-        // varrendo as colunas
-        for(int x = 0; x < _colunas; x++)
-        {
-            // varrendo as linhas
-            for(int y =0; y < _linhas; y++)
-            {
-                // randomiza uma posicao nova
-                int novoX = UnityEngine.Random.Range(0,_colunas-1);
-                int novoY = UnityEngine.Random.Range(0, _linhas - 1);
-
-                //peca atual
-                PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
-                //peca randomizada
-                PecaBehaviourScript pecaRandomizada = _tabuleiro[novoX, novoY];
-
-                // a peça atual fica no lugar da randomizada 
-                _tabuleiro[novoX, novoY] = pecaAtual;
-                pecaAtual.SetPosicao(novoX,novoY);
-                // a peça da posicao randomizada fica no lugar do da peca atual
-                _tabuleiro[x, y] = pecaRandomizada;
-                pecaRandomizada.SetPosicao(x,y);
-                // troca a posicao 
-                Vector3 novaPosicao = pecaRandomizada.transform.position; // guarda a posicao da peca randomizada
-                pecaRandomizada.transform.position = pecaAtual.transform.position; // peca randomizada fica no lugar da peca de 
-                pecaAtual.transform.position = novaPosicao; // peca atual fica no lugar da peca randomizada
-
-            }
-        }        
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -676,9 +556,9 @@ public class LevelBehaviourScript : MonoBehaviour
         // reseta os eventos
         TouchBehaviourScript.PecaTocada -= PecaClickHandler;
         TouchBehaviourScript.ToqueLiberado -= ToqueLiberadoHandler;
-        ReservatorioBehaviourScript.MetaAtingida -= MetaAtingida;
-        ReservatorioBehaviourScript.MetaUltrapassada -= MetaUltrapassada;
-		ReservatorioBehaviourScript.ValorMaximoAtingido -= MetaUltrapassada;
+        ContadorBehaviourScript.MetaAtingida -= MetaAtingida;
+        ContadorBehaviourScript.MetaUltrapassada -= MetaUltrapassada;
+		ContadorBehaviourScript.ValorMaximoAtingido -= MetaUltrapassada;
     }
 
     
