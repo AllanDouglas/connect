@@ -17,6 +17,8 @@ public class PecaBehaviourScript : MonoBehaviour
     public SpriteRenderer sprite;
     [Header("Identificador único da peca")]
     public int id;
+	[Header("Sprite da tranformação do coringa")]
+	public Sprite spriteCoringa;
 	//[Header("Rotulo mostrando o tipo da peca")]
     //public TextMesh label; // label do tipo
     //[Header("Tipo da peca para contagem")]
@@ -26,6 +28,13 @@ public class PecaBehaviourScript : MonoBehaviour
     //posicao no tabuleiro 
     private int _x; 
     private int _y;
+	// flega o status de coringa
+	private bool _coringa = false;
+
+	public bool Coringa{
+		get { return _coringa; }
+	}
+
     private Color _cor; // cor do sprite
     private LineRenderer _linha; // linha
     //encapsulamento da cor
@@ -70,6 +79,15 @@ public class PecaBehaviourScript : MonoBehaviour
         _linha.enabled = true;
 
     }
+
+	public void TransformaEmCoringa(){
+		_coringa = true;
+		this.sprite.color = Color.white;
+		this.sprite.sprite = spriteCoringa;
+		this._linha.SetColors (Color.white,Color.white);
+	}
+
+
 
     void OnMouseDown()
     {

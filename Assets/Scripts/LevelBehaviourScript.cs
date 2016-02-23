@@ -83,7 +83,7 @@ public class LevelBehaviourScript : MonoBehaviour
     }
 
     //trata dos eventos de cliques 
-    private void PecaClickHandler(PecaBehaviourScript peca)
+    private void PecaSelecionadaHandler(PecaBehaviourScript peca)
     {
 
         //verifica se o jogo está ativo
@@ -116,8 +116,13 @@ public class LevelBehaviourScript : MonoBehaviour
                 //recupera a ultima peca
                 PecaBehaviourScript ultimaPeca = _pecasSelecionadas[quantidadeDeElementos - 1];
 
+				if (peca.Coringa) {
+					Debug.Log ("Peca coringa");
+				}
+
                 //verificando a distancia
-                if (
+                if ( // verifica se a peca é um coringa
+					peca.Coringa |
                     // eixo X
                     ((Math.Abs(peca.x - ultimaPeca.x) == 1) & (peca.y - ultimaPeca.y == 0)) |
                      //eixo y
@@ -303,6 +308,22 @@ public class LevelBehaviourScript : MonoBehaviour
 				indexPeca++;
 
 			}
+
+			// se a quantidade de pecas selecionadas for maior ou igual a 5 então 
+			// a ultima peca deve ser transformada em coringa
+			// e removida das pecas selecionadas para remoção
+			// desde que ela não seja coringa
+			if(_pecasSelecionadas.Count >= 5 
+				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Coringa == false){
+				// recupera a ultima peca selecionada
+				PecaBehaviourScript ultimaPeca = _pecasSelecionadas [_pecasSelecionadas.Count - 1];
+				//tranforma ela em coringa
+				ultimaPeca.TransformaEmCoringa();
+				// remove a peca da lista
+				_pecasSelecionadas.Remove(ultimaPeca);
+			}
+
+
 			// remove as pecas do tabuleiro
 			_Tabuleiro.Remover (_pecasSelecionadas);
             // a cada combinação certa descontamos uma chance
@@ -378,7 +399,7 @@ public class LevelBehaviourScript : MonoBehaviour
         Camera.main.transform.position = new Vector3(auxPosicao, Camera.main.transform.position.y, -10);
 
         //configura eventos
-        TouchBehaviourScript.PecaTocada += PecaClickHandler;
+        TouchBehaviourScript.PecaTocada += PecaSelecionadaHandler;
         TouchBehaviourScript.ToqueLiberado += ToqueLiberadoHandler;
 
         ContadorBehaviourScript.MetaAtingida += MetaAtingida;
@@ -554,7 +575,7 @@ public class LevelBehaviourScript : MonoBehaviour
     public void OnDestroy()
     {
         // reseta os eventos
-        TouchBehaviourScript.PecaTocada -= PecaClickHandler;
+        TouchBehaviourScript.PecaTocada -= PecaSelecionadaHandler;
         TouchBehaviourScript.ToqueLiberado -= ToqueLiberadoHandler;
         ContadorBehaviourScript.MetaAtingida -= MetaAtingida;
         ContadorBehaviourScript.MetaUltrapassada -= MetaUltrapassada;

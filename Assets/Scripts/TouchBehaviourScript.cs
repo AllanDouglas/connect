@@ -84,23 +84,17 @@ public class TouchBehaviourScript : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(posicao,
                 Vector2.zero, 2, LayerMask.GetMask("Pecas"));
 
-        
-
         if (hit & PecaTocada != null)
         {
-            
             _iniciouToque = true; // iniciando o toque
             PecaBehaviourScript novaPeca = hit.transform.GetComponent<PecaBehaviourScript>();
-
             //verifica se a peca tocada é a mesma anterior mente
-            if ( PecaTocada != null & novaPeca != _peca)
+			if ( PecaTocada != null & (novaPeca != _peca | novaPeca.Coringa))
             {
-
-            
-                _peca = novaPeca;
-
+				_peca = novaPeca;
                 //dispara o evento
                 PecaTocada(_peca);
+				_peca = null;
             }
 
         }
