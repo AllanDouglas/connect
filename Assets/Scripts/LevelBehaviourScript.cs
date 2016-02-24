@@ -93,6 +93,8 @@ public class LevelBehaviourScript : MonoBehaviour
         if (!_pecasSelecionadas.Contains(peca))
         {
 
+			Debug.Log (peca.Coringa);
+
             int quantidadeDeElementos = _pecasSelecionadas.Count;
 
             //pega a peca atual
@@ -100,8 +102,11 @@ public class LevelBehaviourScript : MonoBehaviour
             if (quantidadeDeElementos == 0)
             {
                 _pecasSelecionadas.Add(peca);
-                _corDaLinha = peca.cor;
 
+				if(peca.Coringa)
+					_corDaLinha = Color.gray;
+				else
+					_corDaLinha = peca.cor;
             }
             else
             //se a lista não está vazia verifica se a nova peca está             
@@ -110,19 +115,15 @@ public class LevelBehaviourScript : MonoBehaviour
             //se a quantidade de pecas selecionadas for maior que um
             //, vai desenhando uma reta entre as pecas
             if (
-                (peca.id == _pecasSelecionadas[quantidadeDeElementos - 1].id)
+					(peca.Coringa | peca.id == _pecasSelecionadas[quantidadeDeElementos - 1].id | _pecasSelecionadas[quantidadeDeElementos - 1].Coringa )
                 )
             {
                 //recupera a ultima peca
                 PecaBehaviourScript ultimaPeca = _pecasSelecionadas[quantidadeDeElementos - 1];
 
-				if (peca.Coringa) {
-					Debug.Log ("Peca coringa");
-				}
-
                 //verificando a distancia
                 if ( // verifica se a peca é um coringa
-					peca.Coringa |
+
                     // eixo X
                     ((Math.Abs(peca.x - ultimaPeca.x) == 1) & (peca.y - ultimaPeca.y == 0)) |
                      //eixo y
@@ -130,6 +131,8 @@ public class LevelBehaviourScript : MonoBehaviour
 
                     )
                 {
+						Debug.Log ("Combina");
+
                     //desenhando a linha
                     //adicionando  line renderer na ultima peca adicionada 
                     // com dois pontos um na propria peca e outro da peca posterior
@@ -151,7 +154,9 @@ public class LevelBehaviourScript : MonoBehaviour
                     //  _linha.SetPosition(quantidadeDeElementos, peca.transform.position);
 
                     //  _linha.gameObject.SetActive(true);
-                }
+					}else{
+					Debug.Log ("Não combina");
+					}
 
 
             }
@@ -292,6 +297,48 @@ public class LevelBehaviourScript : MonoBehaviour
                     break;
                 }
             }
+			// varre as pecas buscando pecas coringa
+			for(int i = 0; i < _pecasSelecionadas.Count; i++){
+				// peca da vez
+				PecaBehaviourScript peca = _pecasSelecionadas [i];
+				// verifica se a peca é um coringa
+				if (peca.Coringa) {
+					// recupera as pecas no quadrande
+					/*
+						*###
+						*#O#
+						*###
+					*/
+					// intera até 9
+					int xInicial = peca.x - 1;
+					int yInicial = peca.y - 1;
+
+					for(int x = 0;x < 3; x++){ // colunas
+
+						// verifica se o x está dentro do tabuleiro
+						if(xInicial + x < 0 | xInicial + x >= _colunas ) continue;
+
+						for (int y = 0; y < 3; y++) { // linhas
+							if(yInicial + y < 0 | xInicial + y >= _linhas ) continue;
+
+							//posicao
+							int xPosicao = xInicial + x;
+							int yPosicao = yInicial + y;
+							//recupera a peca
+							PecaBehaviourScript pecaAtual =  _Tabuleiro.Tabuleiro[xPosicao,yPosicao];
+
+							// verifica se a peca atual é a mesma da peca 
+							if (pecaAtual != peca) {
+								// se for diferente adiciona a peca dentro da lista de pecas selecionadas
+								_pecasSelecionadas.Add(pecaAtual);
+							}
+
+						}
+					}
+
+				}
+
+			}
 
 			// habilita uma nova 
 			int indexPeca = 0;
@@ -404,7 +451,7 @@ public class LevelBehaviourScript : MonoBehaviour
 
         ContadorBehaviourScript.MetaAtingida += MetaAtingida;
 		ContadorBehaviourScript.MetaUltrapassada += MetaUltrapassada;
-		ContadorBehaviourScript.ValorMaximoAtingido += MetaUltrapassada;
+		//ContadorBehaviourScript.ValorMaximoAtingido += MetaUltrapassada;
 
         //carregando os recursos
         CarregarRecursos();
@@ -415,6 +462,7 @@ public class LevelBehaviourScript : MonoBehaviour
 
 			ParticleSystem particula = Instantiate (_particulaPrefab) as ParticleSystem;
 			particula.gameObject.SetActive (false);
+			particula.transform.parent = transform;
 			_particulasDeSaida.Add (particula);
 
 		}

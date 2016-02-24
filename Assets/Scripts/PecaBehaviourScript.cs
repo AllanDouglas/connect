@@ -14,7 +14,7 @@ public class PecaBehaviourScript : MonoBehaviour
     public delegate void OnMouseClick(PecaBehaviourScript peca);
     public static event OnMouseClick OnPecaClicada;
     [Header("Sprite da peca")]
-    public SpriteRenderer sprite;
+    public SpriteRenderer spriteRenderer;
     [Header("Identificador único da peca")]
     public int id;
 	[Header("Sprite da tranformação do coringa")]
@@ -37,6 +37,7 @@ public class PecaBehaviourScript : MonoBehaviour
 
     private Color _cor; // cor do sprite
     private LineRenderer _linha; // linha
+	private Sprite _spritePadrao; // sprite padrão da peca
     //encapsulamento da cor
     public Color cor
     {
@@ -82,21 +83,12 @@ public class PecaBehaviourScript : MonoBehaviour
 
 	public void TransformaEmCoringa(){
 		_coringa = true;
-		this.sprite.color = Color.white;
-		this.sprite.sprite = spriteCoringa;
-		this._linha.SetColors (Color.white,Color.white);
+		this.spriteRenderer.color = Color.white;
+		this.spriteRenderer.sprite = spriteCoringa;
+		this._linha.SetColors (Color.gray,Color.gray);
 	}
 
 
-
-    void OnMouseDown()
-    {
-        //Debug.Log("##### Peca " + gameObject.name +" id " +id+ " clicada ##########");
-        if (OnPecaClicada != null)
-        {
-            OnPecaClicada(this);
-        }
-    }
 
     void Awake()
     {
@@ -113,6 +105,11 @@ public class PecaBehaviourScript : MonoBehaviour
         _linha.SetVertexCount(0);
         _linha.enabled = false;
         gameObject.name = "desativada"; // deve ser removido para o metodo da classe Peca
+
+		// quando a peca sai do tabuleiro ela deve voltar ao normal
+		this._coringa = false;
+		this.spriteRenderer.sprite = _spritePadrao;
+
 		gameObject.SetActive(false);
     
     }
@@ -125,9 +122,11 @@ public class PecaBehaviourScript : MonoBehaviour
     void Start()
     {
         //configura a camada da peca
-        this.sprite.sortingLayerName = "Pecas";
+        this.spriteRenderer.sortingLayerName = "Pecas";
         //pega a cor do sprite
-        this._cor = this.sprite.color;
+        this._cor = this.spriteRenderer.color;
+		this._spritePadrao = this.spriteRenderer.sprite;
+
         _linha.SetVertexCount(2);
         _linha.material = new Material(Shader.Find("Sprites/Default"));
         _linha.SetWidth(0.2f, 0.2f);

@@ -6,27 +6,27 @@
 			{
 				"contador_id":1,
 				"minima": 10,
-				"maxima": 12
+				"maxima": 14
 			},
 			{
 				"contador_id":2,
 				"minima": 10,
-				"maxima": 12
+				"maxima": 14
 			},
 			{
 				"contador_id":3,
 				"minima": 10,
-				"maxima": 12
+				"maxima": 14
 			},
 			{
 				"contador_id":5,
 				"minima": 10,
-				"maxima": 12
+				"maxima": 14
 			}		
 		],
 		"tabuleiro":2,	
-		"objetivo": 500,
-		"chances": 20
+		"objetivo": 560,
+		"chances": 30
 	},
 	{
 	"id": 1,

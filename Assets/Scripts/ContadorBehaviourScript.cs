@@ -76,6 +76,7 @@ public class ContadorBehaviourScript : MonoBehaviour
         // verifica se esta exatamente no valor maximo
         if (_valorAtual == metaMaxima & !_metaUltrapassada)
         {
+				
             _metaUltrapassada = true;
 			if(ValorMaximoAtingido != null)
             	ValorMaximoAtingido(this);
@@ -124,6 +125,9 @@ public class ContadorBehaviourScript : MonoBehaviour
         //verifica se o reservatorio é por meta ou valor maximo
         if (metaMinima >= 0 & metaMaxima > 0)
         {          
+
+
+
             this._verificacaoPorRange = true;
 			//metaMinima.ToString() +
 			meta.text = metaMinima.ToString()+"|"+metaMaxima.ToString();
