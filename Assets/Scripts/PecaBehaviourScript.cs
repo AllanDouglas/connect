@@ -109,6 +109,7 @@ public class PecaBehaviourScript : MonoBehaviour
 		// quando a peca sai do tabuleiro ela deve voltar ao normal
 		this._coringa = false;
 		this.spriteRenderer.sprite = _spritePadrao;
+		this.spriteRenderer.color = this._cor;
 
 		gameObject.SetActive(false);
     

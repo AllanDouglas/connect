@@ -131,9 +131,8 @@ public class LevelBehaviourScript : MonoBehaviour
 
                     )
                 {
-						Debug.Log ("Combina");
-
-                    //desenhando a linha
+						
+					//desenhando a linha
                     //adicionando  line renderer na ultima peca adicionada 
                     // com dois pontos um na propria peca e outro da peca posterior
                     LineRenderer linha = ultimaPeca.gameObject.GetComponent<LineRenderer>();
@@ -154,11 +153,7 @@ public class LevelBehaviourScript : MonoBehaviour
                     //  _linha.SetPosition(quantidadeDeElementos, peca.transform.position);
 
                     //  _linha.gameObject.SetActive(true);
-					}else{
-					Debug.Log ("Não combina");
 					}
-
-
             }
 
         }
@@ -284,19 +279,36 @@ public class LevelBehaviourScript : MonoBehaviour
         //verifica a quantidade de pecas ativas, ser for maior que 1 
         if (_pecasSelecionadas.Count > 1)
         {
-            // pontua de acordo com a quantidade de pecas selecionadas
-            Pontuar(_pecasSelecionadas.Count);
+			// guarda a quantidade de pecas selecionadas inicialmente
+			int QtdPecasParaPontos = _pecasSelecionadas.Count;
+            
             //procura o contador corespondente
             ContadorBehaviourScript contador;
-            foreach (ContadorBehaviourScript reservatorio in _listaDeReservatoriosAtivos)
-            {
-                if (reservatorio.id == _pecasSelecionadas[0].id)
-                {
-                    contador = reservatorio;
-                    contador.Adicionar(_pecasSelecionadas.Count);
-                    break;
-                }
-            }
+			// verifica se a peca da primeira posicao é um coringa
+			if (!_pecasSelecionadas [0].Coringa) {
+				foreach (ContadorBehaviourScript reservatorio in _listaDeReservatoriosAtivos) {
+					if (reservatorio.id == _pecasSelecionadas [0].id) {
+						contador = reservatorio;
+						contador.Adicionar (_pecasSelecionadas.Count);
+						break;
+					}
+				}
+			}
+
+			// se a quantidade de pecas selecionadas for maior ou igual a 5 então 
+			// a ultima peca deve ser transformada em coringa
+			// e removida das pecas selecionadas para remoção
+			// desde que ela não seja coringa
+			if(_pecasSelecionadas.Count >= 5 
+				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Coringa == false){
+				// recupera a ultima peca selecionada
+				PecaBehaviourScript ultimaPeca = _pecasSelecionadas [_pecasSelecionadas.Count - 1];
+				//tranforma ela em coringa
+				ultimaPeca.TransformaEmCoringa();
+				// remove a peca da lista
+				_pecasSelecionadas.Remove(ultimaPeca);
+			}
+
 			// varre as pecas buscando pecas coringa
 			for(int i = 0; i < _pecasSelecionadas.Count; i++){
 				// peca da vez
@@ -327,10 +339,12 @@ public class LevelBehaviourScript : MonoBehaviour
 							//recupera a peca
 							PecaBehaviourScript pecaAtual =  _Tabuleiro.Tabuleiro[xPosicao,yPosicao];
 
-							// verifica se a peca atual é a mesma da peca 
-							if (pecaAtual != peca) {
+							// verifica se a peca atual é a mesma da peca ou se ela ainda não existe dentro do array de pecas selecinadas
+							if (pecaAtual != peca & !_pecasSelecionadas.Contains(pecaAtual)) {
 								// se for diferente adiciona a peca dentro da lista de pecas selecionadas
 								_pecasSelecionadas.Add(pecaAtual);
+								// incrementa a quantidade de pecas para pontuar
+								QtdPecasParaPontos++;
 							}
 
 						}
@@ -340,7 +354,7 @@ public class LevelBehaviourScript : MonoBehaviour
 
 			}
 
-			// habilita uma nova 
+			// exibe uma particula de explosão no lugar de uma peca
 			int indexPeca = 0;
 			for (int i = 0; i < _pecasSelecionadas.Count; i++) {
 
@@ -356,21 +370,10 @@ public class LevelBehaviourScript : MonoBehaviour
 
 			}
 
-			// se a quantidade de pecas selecionadas for maior ou igual a 5 então 
-			// a ultima peca deve ser transformada em coringa
-			// e removida das pecas selecionadas para remoção
-			// desde que ela não seja coringa
-			if(_pecasSelecionadas.Count >= 5 
-				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Coringa == false){
-				// recupera a ultima peca selecionada
-				PecaBehaviourScript ultimaPeca = _pecasSelecionadas [_pecasSelecionadas.Count - 1];
-				//tranforma ela em coringa
-				ultimaPeca.TransformaEmCoringa();
-				// remove a peca da lista
-				_pecasSelecionadas.Remove(ultimaPeca);
-			}
 
 
+			// pontua de acordo com a quantidade de pecas selecionadas
+			Pontuar(_pecasSelecionadas.Count);
 			// remove as pecas do tabuleiro
 			_Tabuleiro.Remover (_pecasSelecionadas);
             // a cada combinação certa descontamos uma chance
