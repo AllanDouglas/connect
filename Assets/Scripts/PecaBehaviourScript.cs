@@ -24,6 +24,7 @@ public class PecaBehaviourScript : MonoBehaviour
     //[Header("Tipo da peca para contagem")]
     //public Tipo tipo;
 
+	public bool debug;
 
     //posicao no tabuleiro 
     private int _x; 
@@ -35,9 +36,13 @@ public class PecaBehaviourScript : MonoBehaviour
 		get { return _coringa; }
 	}
 
+
+
     private Color _cor; // cor do sprite
     private LineRenderer _linha; // linha
 	private Sprite _spritePadrao; // sprite padrão da peca
+
+
     //encapsulamento da cor
     public Color cor
     {
@@ -81,11 +86,16 @@ public class PecaBehaviourScript : MonoBehaviour
 
     }
 
-	public void TransformaEmCoringa(){
+	public void TransformarEmCoringa(){
 		_coringa = true;
 		this.spriteRenderer.color = Color.white;
 		this.spriteRenderer.sprite = spriteCoringa;
 		this._linha.SetColors (Color.gray,Color.gray);
+	}
+
+	public void OnMouseDown (){
+		if (debug)
+			this.TransformarEmCoringa ();
 	}
 
 
@@ -137,6 +147,6 @@ public class PecaBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+		
     }
 }

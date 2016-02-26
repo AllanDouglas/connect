@@ -29,7 +29,7 @@
 		"chances": 30
 	},
 	{
-	"id": 1,
+	"id": 2,
 	"metas":
 		[
 			{
@@ -56,5 +56,63 @@
 		"tabuleiro":3,	
 		"objetivo": 1000,
 		"chances": 40
+	},
+	{
+	"id": 3,
+	"metas":
+		[
+			{
+				"contador_id":1,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":2,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":3,
+				"minima": 26,
+				"maxima": 30
+			},
+			{
+				"contador_id":5,
+				"minima": 26,
+				"maxima": 30
+			}		
+		],
+		"tabuleiro":2,	
+		"objetivo": 1000,
+		"chances": 40
+	},
+	{
+	"id": 4,
+	"metas":
+		[
+			{
+				"contador_id":1,
+				"minima": 8,
+				"maxima": 12
+			},
+			{
+				"contador_id":2,
+				"minima": 8,
+				"maxima": 12
+			},
+			{
+				"contador_id":3,
+				"minima": 8,
+				"maxima": 12
+			},
+			{
+				"contador_id":5,
+				"minima": 8,
+				"maxima": 12
+			}		
+		],
+		"tabuleiro":1,	
+		"objetivo": 500,
+		"chances": 24
 	}
 ]

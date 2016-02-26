@@ -19,6 +19,9 @@ public class LevelBehaviourScript : MonoBehaviour
     [Header("Objeto pai das pecas")]
     public Transform tabuleiro;
 
+	[Header("Interface de in game")]
+	public GameObject  InGameUI;
+
     [Header("Interface de GameOver")]
     public GameOverBehaviourScript GameOverUI;
 
@@ -304,7 +307,7 @@ public class LevelBehaviourScript : MonoBehaviour
 				// recupera a ultima peca selecionada
 				PecaBehaviourScript ultimaPeca = _pecasSelecionadas [_pecasSelecionadas.Count - 1];
 				//tranforma ela em coringa
-				ultimaPeca.TransformaEmCoringa();
+				ultimaPeca.TransformarEmCoringa();
 				// remove a peca da lista
 				_pecasSelecionadas.Remove(ultimaPeca);
 			}
@@ -409,23 +412,35 @@ public class LevelBehaviourScript : MonoBehaviour
     //gameover
     private void GameOver()
     {
+		_jogando = false;
+		//remove o ingame
+		this.InGameUI.SetActive(false);
+
         GameOverUI.gameObject.SetActive(true);
     }
 
 	// level clear
 	private void LevelClear()
 	{
+		_jogando = false;
+		
 		LevelClearUI.gameObject.SetActive (true);
 	}
 
     //pausa o game
     public void Pausar()
     {
+
+
         //inverte o status da pause
         _jogando = !_jogando;
         Time.timeScale =(_jogando)?1.0f:0.0f;
         //ativa ou não a interface de pause
         PauseUI.gameObject.SetActive(!_jogando);
+		// altera a visibilidade da interface de ingameui
+		this.InGameUI.SetActive (_jogando);
+		// altera a visivilidade do tabuleiro
+		this.tabuleiro.gameObject.SetActive (_jogando);
     }
 
     public void Reiniciar()
