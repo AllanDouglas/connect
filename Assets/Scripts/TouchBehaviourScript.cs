@@ -89,7 +89,7 @@ public class TouchBehaviourScript : MonoBehaviour
             _iniciouToque = true; // iniciando o toque
             PecaBehaviourScript novaPeca = hit.transform.GetComponent<PecaBehaviourScript>();
             //verifica se a peca tocada é a mesma anterior mente
-			if ( PecaTocada != null & (novaPeca != _peca | novaPeca.Coringa))
+			if ( PecaTocada != null & (novaPeca != _peca | novaPeca.EhCoringa()))
             {
 				_peca = novaPeca;
                 //dispara o evento

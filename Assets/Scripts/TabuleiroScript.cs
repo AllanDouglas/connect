@@ -18,7 +18,7 @@ public class TabuleiroScript
 	private List<PecaBehaviourScript> _dotsPool = new List<PecaBehaviourScript>(); //pool de dotos
 	private List<PecaBehaviourScript> _dotsAtivas = new List<PecaBehaviourScript>(); // pecas que estão no grid
 	// retorna os dots ativos
-	public List<PecaBehaviourScript> DotsAtivas {
+	public List<PecaBehaviourScript> PecasAtivas {
 		get { return  _dotsAtivas; }
 	}
 	private PecaBehaviourScript[,] _tabuleiro; // tabuleiro
@@ -46,15 +46,18 @@ public class TabuleiroScript
 	{
 		foreach (PecaBehaviourScript peca in pecas)
 		{
-			//remove cada peca do tabuleiro
-			_tabuleiro[peca.x, peca.y] = null;
-			//remove das pecas ativas                
-			_dotsAtivas.Remove(peca);
-			//adiciona as pecas 
-			_dotsPool.Add(peca);
-			peca.Sair(); // retira a peca do tabuleiro                
-
+			Remover (peca);
 		}
+	}
+
+	public void Remover(PecaBehaviourScript peca){
+		//remove cada peca do tabuleiro
+		_tabuleiro[peca.x, peca.y] = null;
+		//remove das pecas ativas                
+		_dotsAtivas.Remove(peca);
+		//adiciona as pecas 
+		_dotsPool.Add(peca);
+		peca.Sair(); // retira a peca do tabuleiro                
 	}
 
 	// reposiciona as pecas do tabuleiro
@@ -93,6 +96,7 @@ public class TabuleiroScript
 		}
 
 	}
+
 	//preencher
 	public void Preencher(int colunas, int linhas)
 	{

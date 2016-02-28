@@ -9,38 +9,50 @@ using System.Collections;
 public class PecaBehaviourScript : MonoBehaviour
 {
 
+	public enum CondicaoEspecial {CORINGA, NEGRA, FORTE, NORMAL}
+
     //public enum Tipo { SOMA, SUBTRACAO};
     // eventos
-    public delegate void OnMouseClick(PecaBehaviourScript peca);
-    public static event OnMouseClick OnPecaClicada;
+//    public delegate void OnMouseClick(PecaBehaviourScript peca);
+//    public static event OnMouseClick OnPecaClicada;
     [Header("Sprite da peca")]
     public SpriteRenderer spriteRenderer;
     [Header("Identificador único da peca")]
     public int id;
+	[Header("Sprite padrão")]
+	public Sprite _spritePadrao; // sprite padrão da peca
 	[Header("Sprite da tranformação do coringa")]
 	public Sprite spriteCoringa;
+	[Header("Sprite da tranformação do forte")]
+	public Sprite spriteForte;
 	//[Header("Rotulo mostrando o tipo da peca")]
     //public TextMesh label; // label do tipo
     //[Header("Tipo da peca para contagem")]
     //public Tipo tipo;
 
-	public bool debug;
+	private CondicaoEspecial _condicao = CondicaoEspecial.NORMAL; // condicao especial da peca
+	public CondicaoEspecial Condicao{
+		get{ return _condicao; } 
+	}
+
+	//public bool debug;
 
     //posicao no tabuleiro 
     private int _x; 
     private int _y;
-	// flega o status de coringa
-	private bool _coringa = false;
 
-	public bool Coringa{
-		get { return _coringa; }
+
+	public bool EhCoringa(){
+		return _condicao == CondicaoEspecial.CORINGA;
+	}
+
+	public bool EhNegra(){
+		return _condicao == CondicaoEspecial.NEGRA;
 	}
 
 
-
-    private Color _cor; // cor do sprite
+	private Color _cor; // cor do sprite
     private LineRenderer _linha; // linha
-	private Sprite _spritePadrao; // sprite padrão da peca
 
 
     //encapsulamento da cor
@@ -85,27 +97,53 @@ public class PecaBehaviourScript : MonoBehaviour
         _linha.enabled = true;
 
     }
+	// transforma a peca em peca forte
+	public void TransformarEmForte(){
+		_condicao = CondicaoEspecial.FORTE;
+		this.spriteRenderer.sprite = spriteForte;
+	}
 
+	// transforma em boa negra removendo
+	public void TransformarEmNegra(){
+		gameObject.layer = LayerMask.NameToLayer("PecasNegras");
+		_condicao = CondicaoEspecial.NEGRA;
+		this.spriteRenderer.color = Color.gray;	
+	}
+
+	// tranforma a peca em coringa
 	public void TransformarEmCoringa(){
-		_coringa = true;
+		_condicao = CondicaoEspecial.CORINGA;
 		this.spriteRenderer.color = Color.white;
 		this.spriteRenderer.sprite = spriteCoringa;
 		this._linha.SetColors (Color.gray,Color.gray);
 	}
 
-	public void OnMouseDown (){
-		if (debug)
-			this.TransformarEmCoringa ();
+	public void TornarNormal(){
+		gameObject.layer = LayerMask.NameToLayer("Pecas");
+		this.spriteRenderer.sprite = this._spritePadrao;
+		this._condicao = CondicaoEspecial.NORMAL;
+		this.spriteRenderer.color = this._cor;
+		this._linha.SetColors (_cor,_cor);
+		_linha.SetVertexCount(0);
+		//_linha.enabled = false;
 	}
-
-
+		
 
     void Awake()
     {
-        //seta a camada 
+		//seta a camada 
         gameObject.layer = LayerMask.NameToLayer("Pecas");
         //adiciona component de linha
         _linha = gameObject.AddComponent<LineRenderer>();
+		//configura a camada da peca
+		this.spriteRenderer.sortingLayerName = "Pecas";
+		//pega a cor do sprite
+		this._cor = this.spriteRenderer.color;
+		//this._spritePadrao = this.spriteRenderer.sprite;
+
+		_linha.SetVertexCount(2);
+		_linha.material = new Material(Shader.Find("Sprites/Default"));
+		_linha.SetWidth(0.2f, 0.2f);
     }
     //sai do tabuleiro
     public void Sair()
@@ -117,7 +155,8 @@ public class PecaBehaviourScript : MonoBehaviour
         gameObject.name = "desativada"; // deve ser removido para o metodo da classe Peca
 
 		// quando a peca sai do tabuleiro ela deve voltar ao normal
-		this._coringa = false;
+		_condicao = CondicaoEspecial.NORMAL;
+
 		this.spriteRenderer.sprite = _spritePadrao;
 		this.spriteRenderer.color = this._cor;
 
@@ -129,20 +168,7 @@ public class PecaBehaviourScript : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 
-	// Use this for initialization
-    void Start()
-    {
-        //configura a camada da peca
-        this.spriteRenderer.sortingLayerName = "Pecas";
-        //pega a cor do sprite
-        this._cor = this.spriteRenderer.color;
-		this._spritePadrao = this.spriteRenderer.sprite;
 
-        _linha.SetVertexCount(2);
-        _linha.material = new Material(Shader.Find("Sprites/Default"));
-        _linha.SetWidth(0.2f, 0.2f);
-        
-    }
 
     // Update is called once per frame
     void Update()

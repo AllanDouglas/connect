@@ -60,11 +60,16 @@ public class LevelBehaviourScript : MonoBehaviour
     private int _linhas; // quantidade de linhas
 
     //Nivel
+	private Hashtable _informacaoDoNivel; // informacoes do nivel
+	private ArrayList _posicoesPecasFortes = new ArrayList(); // posicoes das pecas fortes
+	private ArrayList _posicoesPecasNegras = new ArrayList(); // posicoes das pecas negras
     private float _objetivo = 0; // quantidade de pontos que devem ser atingidos para passar do nivel
     private int _metas = 0; // quantidade de metas que devem ser batidas
     private float _chances = 0; // quantidade de chances que podem ser usadas para finalizar
     private int _metasAtingidas = 0; // quantidade de metas que foram atingidas
     private int _pontos = 0; // quantidade de pontos atuais 
+	private int _qtdPecasNegas = 0; // quantidade de pecas negras no tabuleiro
+	private int _qtdPecasFortes = 0; // quantidade de pecas negras no tabuleiro
     private bool _jogando = true;
 
     // Use this for initialization
@@ -78,12 +83,24 @@ public class LevelBehaviourScript : MonoBehaviour
         _chances--; // remove uma chance
         chances.text = _chances.ToString(); // atualiza o texto
 
-        if (_chances == 0)
+		if (_chances == 0 & !VerificarMetas())
         {
             GameOver();
         }
 
     }
+
+	// verifica se todas as metas foram batidas
+	private bool VerificarMetas(){
+
+		List<PecaBehaviourScript> pecasNegas = _Tabuleiro.PecasAtivas.FindAll (peca => {
+			return peca.Condicao == PecaBehaviourScript.CondicaoEspecial.NEGRA;
+		});
+		
+		return (_metas == _metasAtingidas & _pontos >= _objetivo & 
+			_chances >= 0 & pecasNegas.Count == 0 & _qtdPecasFortes == 0) ;
+
+	}
 
     //trata dos eventos de cliques 
     private void PecaSelecionadaHandler(PecaBehaviourScript peca)
@@ -92,12 +109,12 @@ public class LevelBehaviourScript : MonoBehaviour
         //verifica se o jogo está ativo
         if (!_jogando) return;
 
+		Debug.Log (peca.EhNegra());
+
         //verifica se a peca já está dentro das pecas selecionadas 
-        if (!_pecasSelecionadas.Contains(peca))
+		if (!_pecasSelecionadas.Contains(peca) & !peca.EhNegra())
         {
-
-			Debug.Log (peca.Coringa);
-
+			
             int quantidadeDeElementos = _pecasSelecionadas.Count;
 
             //pega a peca atual
@@ -106,7 +123,7 @@ public class LevelBehaviourScript : MonoBehaviour
             {
                 _pecasSelecionadas.Add(peca);
 
-				if(peca.Coringa)
+				if(peca.EhCoringa())
 					_corDaLinha = Color.gray;
 				else
 					_corDaLinha = peca.cor;
@@ -118,7 +135,7 @@ public class LevelBehaviourScript : MonoBehaviour
             //se a quantidade de pecas selecionadas for maior que um
             //, vai desenhando uma reta entre as pecas
             if (
-					(peca.Coringa | peca.id == _pecasSelecionadas[quantidadeDeElementos - 1].id | _pecasSelecionadas[quantidadeDeElementos - 1].Coringa )
+					(peca.EhCoringa() | peca.id == _pecasSelecionadas[quantidadeDeElementos - 1].id | _pecasSelecionadas[quantidadeDeElementos - 1].EhCoringa() )
                 )
             {
                 //recupera a ultima peca
@@ -186,10 +203,13 @@ public class LevelBehaviourScript : MonoBehaviour
 
 		int index = UnityEngine.Random.Range (0, niveis.Count);
 
-        Hashtable nivel = niveis[index] as Hashtable;
+        Hashtable nivel = niveis[index] as Hashtable; // recupera o nivel atual
+		_informacaoDoNivel = nivel;
+
         // chances de objetivo
-        _chances = (float)nivel["chances"];
+		_chances =  (float)nivel["chances"];
         _objetivo = (float)nivel["objetivo"];
+
 
         chances.text = _chances.ToString();
         pontos.text = "0 /" + _objetivo.ToString();
@@ -212,6 +232,16 @@ public class LevelBehaviourScript : MonoBehaviour
                 _linhas = 4;
                 break;
         }
+		//configurações de tabuleiro
+
+
+		//pecas forte
+		_posicoesPecasFortes = nivel["fortes"] as ArrayList;
+		//pecas negras
+		_posicoesPecasNegras = nivel["negras"] as ArrayList;
+
+		// fim das configurações do tabuleiro
+
 
         // metas 
         ArrayList metas = nivel["metas"] as ArrayList;
@@ -238,6 +268,8 @@ public class LevelBehaviourScript : MonoBehaviour
 
                 float minima = (float)meta["minima"];
                 float maxima = (float)meta["maxima"];
+
+
 
                 reservatorio.metaMinima = (int)minima;
                 reservatorio.metaMaxima = (int)maxima;
@@ -288,7 +320,7 @@ public class LevelBehaviourScript : MonoBehaviour
             //procura o contador corespondente
             ContadorBehaviourScript contador;
 			// verifica se a peca da primeira posicao é um coringa
-			if (!_pecasSelecionadas [0].Coringa) {
+			if (!_pecasSelecionadas [0].EhCoringa()) {
 				foreach (ContadorBehaviourScript reservatorio in _listaDeReservatoriosAtivos) {
 					if (reservatorio.id == _pecasSelecionadas [0].id) {
 						contador = reservatorio;
@@ -303,7 +335,8 @@ public class LevelBehaviourScript : MonoBehaviour
 			// e removida das pecas selecionadas para remoção
 			// desde que ela não seja coringa
 			if(_pecasSelecionadas.Count >= 5 
-				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Coringa == false){
+				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Condicao 
+						== PecaBehaviourScript.CondicaoEspecial.NORMAL){
 				// recupera a ultima peca selecionada
 				PecaBehaviourScript ultimaPeca = _pecasSelecionadas [_pecasSelecionadas.Count - 1];
 				//tranforma ela em coringa
@@ -317,7 +350,7 @@ public class LevelBehaviourScript : MonoBehaviour
 				// peca da vez
 				PecaBehaviourScript peca = _pecasSelecionadas [i];
 				// verifica se a peca é um coringa
-				if (peca.Coringa) {
+				if (peca.EhCoringa()) {
 					// recupera as pecas no quadrande
 					/*
 						*###
@@ -359,6 +392,11 @@ public class LevelBehaviourScript : MonoBehaviour
 
 			// exibe uma particula de explosão no lugar de uma peca
 			int indexPeca = 0;
+
+			int quantidadePecasSelecionadas = _pecasSelecionadas.Count;
+			// lista que vai armazenar as pecas do tipo forte
+			List<PecaBehaviourScript> pecasFortes = new List<PecaBehaviourScript> ();
+
 			for (int i = 0; i < _pecasSelecionadas.Count; i++) {
 
 				ParticleSystem particula = _particulasDeSaida [i];
@@ -366,17 +404,26 @@ public class LevelBehaviourScript : MonoBehaviour
 
 
 				PecaBehaviourScript peca = _pecasSelecionadas [indexPeca];
+
 				particula.transform.position = peca.transform.position;
 				particula.startColor = peca.cor;
 				particula.gameObject.SetActive (true);
 				indexPeca++;
+				// verifica se a peca é forte
+				if (peca.Condicao == PecaBehaviourScript.CondicaoEspecial.FORTE) {
+					pecasFortes.Add (peca);
+					_qtdPecasFortes--;
+					peca.TornarNormal (); // deixa a peca normal
+				}
 
 			}
-
-
-
+			//remove as pecas fortes
+			_pecasSelecionadas.RemoveAll (peca => {
+				Debug.Log(peca.Condicao);
+				return pecasFortes.Contains(peca);
+			});
 			// pontua de acordo com a quantidade de pecas selecionadas
-			Pontuar(_pecasSelecionadas.Count);
+			Pontuar(QtdPecasParaPontos);
 			// remove as pecas do tabuleiro
 			_Tabuleiro.Remover (_pecasSelecionadas);
             // a cada combinação certa descontamos uma chance
@@ -396,7 +443,7 @@ public class LevelBehaviourScript : MonoBehaviour
        
         _metasAtingidas++;
 
-        if(_metas == _metasAtingidas & _pontos >= _objetivo)
+		if(VerificarMetas()) 
         {
 			LevelClear();
         }
@@ -413,8 +460,9 @@ public class LevelBehaviourScript : MonoBehaviour
     private void GameOver()
     {
 		_jogando = false;
-		//remove o ingame
-		this.InGameUI.SetActive(false);
+		//remove o ingame 
+		//this.InGameUI.SetActive(false);
+		tabuleiro.gameObject.SetActive(false);
 
         GameOverUI.gameObject.SetActive(true);
     }
@@ -430,9 +478,7 @@ public class LevelBehaviourScript : MonoBehaviour
     //pausa o game
     public void Pausar()
     {
-
-
-        //inverte o status da pause
+		//inverte o status da pause
         _jogando = !_jogando;
         Time.timeScale =(_jogando)?1.0f:0.0f;
         //ativa ou não a interface de pause
@@ -476,7 +522,7 @@ public class LevelBehaviourScript : MonoBehaviour
         CarregarPool();
 
 		// alimenta o pool de particulas
-		for(int i = 0; i < 15; i++){
+		for(int i = 0; i < (_colunas * _linhas); i++){
 
 			ParticleSystem particula = Instantiate (_particulaPrefab) as ParticleSystem;
 			particula.gameObject.SetActive (false);
@@ -484,13 +530,54 @@ public class LevelBehaviourScript : MonoBehaviour
 			_particulasDeSaida.Add (particula);
 
 		}
-
-
 		// preenche o tabuleiro
 		_Tabuleiro.transformPai = tabuleiro;
 		_Tabuleiro.Preencher (_colunas, _linhas);
 
+
+		// coloca as pecas pretas no tabuleiro
+		if (_posicoesPecasNegras.Count > 0) {
+			_qtdPecasNegas = _posicoesPecasNegras.Count;
+			PosicionarPecasNegras (_Tabuleiro.Tabuleiro);
+		}
+		// colocar as pecas fotes no tabuleiro
+		if (_posicoesPecasFortes.Count > 0) {
+			_qtdPecasFortes = _posicoesPecasFortes.Count;
+			PosicionarPecasFortes (_Tabuleiro.Tabuleiro);
+		}
+			
+
+
     }
+	// carrega as pecas que precisão de dois hits para sair 
+	private void PosicionarPecasFortes(PecaBehaviourScript[,] pecas){
+		
+		foreach (Hashtable posicao in _posicoesPecasFortes) {
+			float x =(float) posicao ["coluna"];
+			float y =(float) posicao ["linha"];
+			//recupera a peca na posicao
+			PecaBehaviourScript peca = pecas[(int)x,(int) y];
+			//tranforma a peca em peca forte
+			peca.TransformarEmForte();
+
+		}
+
+	}
+
+	// coloca as bolas negras no tabuleiro
+	private void PosicionarPecasNegras(PecaBehaviourScript[,] pecas){
+
+		foreach (Hashtable posicao in _posicoesPecasNegras) {
+			float x =(float) posicao ["coluna"];
+			float y =(float) posicao ["linha"];
+			//recupera a peca na posicao
+			PecaBehaviourScript peca = pecas[(int)x,(int) y];
+			//tranforma a peca em peca forte
+			peca.TransformarEmNegra();
+
+		}
+
+	}
 
     //carrega o pool de peças do jogo
     private void CarregarPool()

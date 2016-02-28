@@ -61,8 +61,6 @@ public class ContadorBehaviourScript : MonoBehaviour
         this.contador.value += quantidade;
         this._valorAtual += quantidade;
 
-        Debug.Log("### Quantidade Atual "+this._valorAtual);
-
         quantidadeAtual.text = _valorAtual.ToString();
 
         //verifica os valores da meta

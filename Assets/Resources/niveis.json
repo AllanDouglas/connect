@@ -1,6 +1,51 @@
 [
+{
+	"metas":
+		[
+			{
+				"contador_id":1,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":2,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":3,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":4,
+				"minima": 16,
+				"maxima": 20
+			}		
+		],
+		"tabuleiro":3,	
+		"objetivo": 1000,
+		"chances": 25,
+		"negras" : [
+			
+		],
+		"fortes" :[
+			{
+			"coluna" :3,
+			"linha": 2
+			},
+			{
+			"coluna" :2,
+			"linha": 5
+			},
+			{
+			"coluna" :4,
+			"linha": 4
+			}
+		],
+		"contagiosas" :[]		
+	},
 	{
-	"id": 1,
 	"metas":
 		[
 			{
@@ -19,17 +64,70 @@
 				"maxima": 14
 			},
 			{
-				"contador_id":5,
+				"contador_id":4,
 				"minima": 10,
 				"maxima": 14
 			}		
 		],
 		"tabuleiro":2,	
 		"objetivo": 560,
-		"chances": 30
+		"chances": 30,
+		"negras" : [
+			
+		],
+		"fortes" :[
+			{
+			"coluna" :3,
+			"linha": 4
+			},
+			{
+			"coluna" :2,
+			"linha": 4
+			},
+			{
+			"coluna" :4,
+			"linha": 4
+			}
+		],
+		"contagiosas" :[]		
+	},
+		{
+	
+	"metas":
+		[
+			{
+				"contador_id":1,
+				"minima": 10,
+				"maxima": 14
+			},
+			{
+				"contador_id":2,
+				"minima": 10,
+				"maxima": 14
+			},
+			{
+				"contador_id":3,
+				"minima": 10,
+				"maxima": 14
+			},
+			{
+				"contador_id":4,
+				"minima": 10,
+				"maxima": 14
+			}		
+		],
+		"tabuleiro":2,	
+		"objetivo": 560,
+		"chances": 30,
+		"negras" : [
+			
+		],
+		"fortes" :[			
+		],
+		"contagiosas" :[]	
 	},
 	{
-	"id": 2,
+	
 	"metas":
 		[
 			{
@@ -48,17 +146,22 @@
 				"maxima": 30
 			},
 			{
-				"contador_id":5,
+				"contador_id":4,
 				"minima": 26,
 				"maxima": 30
 			}		
 		],
 		"tabuleiro":3,	
 		"objetivo": 1000,
-		"chances": 40
+		"chances": 40,
+		"negras" : [
+			
+		],
+		"fortes" :[
+		],
+		"contagiosas" :[]	
 	},
 	{
-	"id": 3,
 	"metas":
 		[
 			{
@@ -77,17 +180,26 @@
 				"maxima": 30
 			},
 			{
-				"contador_id":5,
+				"contador_id":4,
 				"minima": 26,
 				"maxima": 30
 			}		
 		],
 		"tabuleiro":2,	
 		"objetivo": 1000,
-		"chances": 40
+		"chances": 40,
+		"negras" : [
+			{
+			"coluna" :3,
+			"linha": 4
+			}
+		],
+		"fortes" :[
+		],
+		"contagiosas" :[]	
 	},
 	{
-	"id": 4,
+	
 	"metas":
 		[
 			{
@@ -106,13 +218,20 @@
 				"maxima": 12
 			},
 			{
-				"contador_id":5,
+				"contador_id":4,
 				"minima": 8,
 				"maxima": 12
 			}		
 		],
 		"tabuleiro":1,	
 		"objetivo": 500,
-		"chances": 24
+		"chances": 24,
+		,
+		"negras" : [
+			
+		],
+		"fortes" :[
+		],
+		"contagiosas" :[]	
 	}
 ]
