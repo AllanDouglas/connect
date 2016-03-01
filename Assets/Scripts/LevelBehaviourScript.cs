@@ -20,7 +20,7 @@ public class LevelBehaviourScript : MonoBehaviour
     public Transform tabuleiro;
 
 	[Header("Interface de in game")]
-	public GameObject  InGameUI;
+	public InGameUIBehaviourScript  InGameUI;
 
     [Header("Interface de GameOver")]
     public GameOverBehaviourScript GameOverUI;
@@ -30,6 +30,9 @@ public class LevelBehaviourScript : MonoBehaviour
 
 	[Header("Interface de Level Clear")]
 	public ClearLevelBehaviourScript LevelClearUI;
+
+	[Header("Interface de Transform pai dos contadores")]
+	public Transform PaiDosContadores;
 
     [Header("Linha de seleção")]
     public LineRenderer _linha; // linha que vai ligar 
@@ -83,9 +86,10 @@ public class LevelBehaviourScript : MonoBehaviour
         _chances--; // remove uma chance
         chances.text = _chances.ToString(); // atualiza o texto
 
-		if (_chances == 0 & !VerificarMetas())
+		if (_chances == 0)
         {
-            GameOver();
+			if (!VerificarMetas ())
+				GameOver();
         }
 
     }
@@ -96,6 +100,8 @@ public class LevelBehaviourScript : MonoBehaviour
 		List<PecaBehaviourScript> pecasNegas = _Tabuleiro.PecasAtivas.FindAll (peca => {
 			return peca.Condicao == PecaBehaviourScript.CondicaoEspecial.NEGRA;
 		});
+
+		Debug.Log ("### pecas fortes "+_qtdPecasFortes+", quantidade de pecas negras "+pecasNegas.Count);
 		
 		return (_metas == _metasAtingidas & _pontos >= _objetivo & 
 			_chances >= 0 & pecasNegas.Count == 0 & _qtdPecasFortes == 0) ;
@@ -106,10 +112,11 @@ public class LevelBehaviourScript : MonoBehaviour
     private void PecaSelecionadaHandler(PecaBehaviourScript peca)
     {
 
+
         //verifica se o jogo está ativo
         if (!_jogando) return;
 
-		Debug.Log (peca.EhNegra());
+		Debug.Log (peca);
 
         //verifica se a peca já está dentro das pecas selecionadas 
 		if (!_pecasSelecionadas.Contains(peca) & !peca.EhNegra())
@@ -211,8 +218,11 @@ public class LevelBehaviourScript : MonoBehaviour
         _objetivo = (float)nivel["objetivo"];
 
 
-        chances.text = _chances.ToString();
-        pontos.text = "0 /" + _objetivo.ToString();
+		// seta os textos da ui ingame
+		InGameUI.movimentos.text = _chances.ToString();
+		InGameUI.objetivo.text =   _objetivo.ToString();
+		InGameUI.barraDepontos.maxValue = _objetivo;
+
         // tamanho do GRID
         float tamanho = (float)nivel["tabuleiro"];
         int tam = (int)tamanho;
@@ -293,12 +303,14 @@ public class LevelBehaviourScript : MonoBehaviour
 			_pontos += extraPontos;
 		}
 
-        pontos.text = _pontos.ToString()+" /"+_objetivo.ToString();
+		InGameUI.barraDepontos.value = _pontos; // pontos 
+		InGameUI.pontos.text = _pontos.ToString();
 
         // verifica se a pontuação foi suficiante para atingir os objetivos
-        if (_pontos >= _objetivo & _metas == _metasAtingidas)
+		if (_pontos >= _objetivo /*_pontos >= _objetivo & _metas == _metasAtingidas*/)
         {
-			LevelClear();
+			if(VerificarMetas())
+				LevelClear();
         }
 
 
@@ -334,7 +346,7 @@ public class LevelBehaviourScript : MonoBehaviour
 			// a ultima peca deve ser transformada em coringa
 			// e removida das pecas selecionadas para remoção
 			// desde que ela não seja coringa
-			if(_pecasSelecionadas.Count >= 5 
+			if(_pecasSelecionadas.Count >= 4 
 				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Condicao 
 						== PecaBehaviourScript.CondicaoEspecial.NORMAL){
 				// recupera a ultima peca selecionada
@@ -367,7 +379,7 @@ public class LevelBehaviourScript : MonoBehaviour
 						if(xInicial + x < 0 | xInicial + x >= _colunas ) continue;
 
 						for (int y = 0; y < 3; y++) { // linhas
-							if(yInicial + y < 0 | xInicial + y >= _linhas ) continue;
+							if(yInicial + y < 0 | yInicial + y >= _linhas ) continue;
 
 							//posicao
 							int xPosicao = xInicial + x;
@@ -484,7 +496,7 @@ public class LevelBehaviourScript : MonoBehaviour
         //ativa ou não a interface de pause
         PauseUI.gameObject.SetActive(!_jogando);
 		// altera a visibilidade da interface de ingameui
-		this.InGameUI.SetActive (_jogando);
+		this.InGameUI.gameObject.SetActive (_jogando);
 		// altera a visivilidade do tabuleiro
 		this.tabuleiro.gameObject.SetActive (_jogando);
     }
@@ -500,6 +512,7 @@ public class LevelBehaviourScript : MonoBehaviour
         //o jogo sempre começa ativo
         _jogando = true;
         Time.timeScale = 1.0f;
+
 
         //Configura o nivel
         ConfigurarNivel();

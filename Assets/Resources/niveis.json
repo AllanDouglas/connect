@@ -77,6 +77,10 @@
 		],
 		"fortes" :[
 			{
+			"coluna" :0,
+			"linha": 2
+			},
+			{
 			"coluna" :3,
 			"linha": 4
 			},
@@ -87,6 +91,18 @@
 			{
 			"coluna" :4,
 			"linha": 4
+			},
+			{
+			"coluna" :1,
+			"linha": 4
+			},
+			{
+			"coluna" :2,
+			"linha": 2
+			},
+			{
+			"coluna" :3,
+			"linha": 1
 			}
 		],
 		"contagiosas" :[]		
@@ -155,7 +171,14 @@
 		"objetivo": 1000,
 		"chances": 40,
 		"negras" : [
-			
+			{
+			"coluna" :3,
+			"linha": 2
+			},
+			{
+			"coluna" :3,
+			"linha": 4
+			}
 		],
 		"fortes" :[
 		],

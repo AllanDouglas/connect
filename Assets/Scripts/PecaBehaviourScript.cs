@@ -105,7 +105,6 @@ public class PecaBehaviourScript : MonoBehaviour
 
 	// transforma em boa negra removendo
 	public void TransformarEmNegra(){
-		gameObject.layer = LayerMask.NameToLayer("PecasNegras");
 		_condicao = CondicaoEspecial.NEGRA;
 		this.spriteRenderer.color = Color.gray;	
 	}
@@ -119,7 +118,7 @@ public class PecaBehaviourScript : MonoBehaviour
 	}
 
 	public void TornarNormal(){
-		gameObject.layer = LayerMask.NameToLayer("Pecas");
+		
 		this.spriteRenderer.sprite = this._spritePadrao;
 		this._condicao = CondicaoEspecial.NORMAL;
 		this.spriteRenderer.color = this._cor;
