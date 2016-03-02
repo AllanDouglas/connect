@@ -41,7 +41,7 @@ public class ContadorBehaviourScript : MonoBehaviour
     // marca da cor dor reservatorio
     public Image marcador;
 	public Image background;
-	public Sprite metaUltrapassada;
+	public Image metaUltrapassada;
     //labels
     public Text quantidadeAtual;
     public Text meta;
@@ -82,8 +82,9 @@ public class ContadorBehaviourScript : MonoBehaviour
         //verifica se o valor maximo da meta foi ultrapassada
         else if (_valorAtual > metaMaxima)
         {		
-			this.background.sprite = metaUltrapassada;	
-				
+			//this.background.sprite = metaUltrapassada;	
+			metaUltrapassada.gameObject.SetActive(true);
+
 			if(MetaUltrapassada != null)
             	MetaUltrapassada(this);
         }
@@ -150,6 +151,7 @@ public class ContadorBehaviourScript : MonoBehaviour
         
         // define a cor do slider
         this.contador.fillRect.gameObject.GetComponent<Image>().color = cor;
+		this.metaUltrapassada.color = cor;
 		this.background.color = corDoBackground;
     }
 

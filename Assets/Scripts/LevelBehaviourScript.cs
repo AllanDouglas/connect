@@ -50,9 +50,11 @@ public class LevelBehaviourScript : MonoBehaviour
 
     private PecaBehaviourScript[] _dotsPrefabs; // lista de prefabs dos circulos
     private ContadorBehaviourScript _reservatorioPrefab; // prafab do reservatorio
-	private ParticleSystem _particulaPrefab; // prafab da particula
+	private ParticleSystem _particulaSaidaPrefab; // prafab da particula
+	private ParticleSystem _particulaCoringaPrefab; // prefab da particula de coringa
 
 	private List<ParticleSystem> _particulasDeSaida = new List<ParticleSystem>() ; // pool de particulas de saida
+	private List<ParticleSystem> _particulasCoringa = new List<ParticleSystem>(); // pool de particulas de transformação de coringa
     private List<ContadorBehaviourScript> _listaDeReservatoriosAtivos = new List<ContadorBehaviourScript>(); // lista dos reservatorios
     //private List<PecaBehaviourScript> _dotsPool; //pool de dotos
     private List<PecaBehaviourScript> _dotsAtivas = new List<PecaBehaviourScript>(); // pecas que estão no grid
@@ -71,7 +73,7 @@ public class LevelBehaviourScript : MonoBehaviour
     private float _chances = 0; // quantidade de chances que podem ser usadas para finalizar
     private int _metasAtingidas = 0; // quantidade de metas que foram atingidas
     private int _pontos = 0; // quantidade de pontos atuais 
-	private int _qtdPecasNegas = 0; // quantidade de pecas negras no tabuleiro
+	private int _qtdPecasNegras = 0; // quantidade de pecas negras no tabuleiro
 	private int _qtdPecasFortes = 0; // quantidade de pecas negras no tabuleiro
     private bool _jogando = true;
 
@@ -246,9 +248,13 @@ public class LevelBehaviourScript : MonoBehaviour
 
 
 		//pecas forte
-		_posicoesPecasFortes = nivel["fortes"] as ArrayList;
+		float pecasFortes = (float) nivel["fortes"];
+		_qtdPecasFortes = (int) pecasFortes;
+		//_posicoesPecasFortes = nivel["fortes"] as ArrayList;
 		//pecas negras
-		_posicoesPecasNegras = nivel["negras"] as ArrayList;
+		float pecasNegras = (float) nivel["negras"];
+		_qtdPecasNegras = (int)pecasNegras;
+		//_posicoesPecasNegras = nivel["negras"] as ArrayList;
 
 		// fim das configurações do tabuleiro
 
@@ -315,22 +321,19 @@ public class LevelBehaviourScript : MonoBehaviour
 
 
     }
+	// trata as pecas selecionads
+	private IEnumerator TratarPecasSelecionadas(){
 
-    //trata o evento de quando o toque é liberado
-    // lugar onde é removido as peças seleciodas
-    private void ToqueLiberadoHandler()
-    {
-        //verifica se o jogo está ativo
-        if (!_jogando) return;
+		_jogando = false;
 
-        //verifica a quantidade de pecas ativas, ser for maior que 1 
-        if (_pecasSelecionadas.Count > 1)
-        {
+		//verifica a quantidade de pecas ativas, ser for maior que 1 
+		if (_pecasSelecionadas.Count > 1)
+		{
 			// guarda a quantidade de pecas selecionadas inicialmente
 			int QtdPecasParaPontos = _pecasSelecionadas.Count;
-            
-            //procura o contador corespondente
-            ContadorBehaviourScript contador;
+
+			//procura o contador corespondente
+			ContadorBehaviourScript contador;
 			// verifica se a peca da primeira posicao é um coringa
 			if (!_pecasSelecionadas [0].EhCoringa()) {
 				foreach (ContadorBehaviourScript reservatorio in _listaDeReservatoriosAtivos) {
@@ -348,11 +351,15 @@ public class LevelBehaviourScript : MonoBehaviour
 			// desde que ela não seja coringa
 			if(_pecasSelecionadas.Count >= 4 
 				& _pecasSelecionadas [_pecasSelecionadas.Count - 1].Condicao 
-						== PecaBehaviourScript.CondicaoEspecial.NORMAL){
+				== PecaBehaviourScript.CondicaoEspecial.NORMAL){
 				// recupera a ultima peca selecionada
 				PecaBehaviourScript ultimaPeca = _pecasSelecionadas [_pecasSelecionadas.Count - 1];
 				//tranforma ela em coringa
 				ultimaPeca.TransformarEmCoringa();
+				_particulasCoringa [0].gameObject.SetActive (false);
+				_particulasCoringa [0].transform.position = ultimaPeca.transform.position;
+				_particulasCoringa [0].transform.parent = ultimaPeca.transform;
+				_particulasCoringa [0].gameObject.SetActive (true);
 				// remove a peca da lista
 				_pecasSelecionadas.Remove(ultimaPeca);
 			}
@@ -431,19 +438,32 @@ public class LevelBehaviourScript : MonoBehaviour
 			}
 			//remove as pecas fortes
 			_pecasSelecionadas.RemoveAll (peca => {
-				Debug.Log(peca.Condicao);
 				return pecasFortes.Contains(peca);
 			});
 			// pontua de acordo com a quantidade de pecas selecionadas
 			Pontuar(QtdPecasParaPontos);
 			// remove as pecas do tabuleiro
 			_Tabuleiro.Remover (_pecasSelecionadas);
-            // a cada combinação certa descontamos uma chance
-            RemoverChance();
-        }
-        _pecasSelecionadas.Clear();// limpa lista     
+			// a cada combinação certa descontamos uma chance
+			RemoverChance();
+		}
+		_pecasSelecionadas.Clear();// limpa lista     
 		_Tabuleiro.Reposicionar();
 		_Tabuleiro.Repreencher ();
+
+		yield return new WaitForSeconds (0.5f);
+		_jogando = true;
+	}
+
+    //trata o evento de quando o toque é liberado
+    // lugar onde é removido as peças seleciodas
+    private void ToqueLiberadoHandler()
+    {
+        //verifica se o jogo está ativo
+        if (!_jogando) return;
+
+		StartCoroutine (TratarPecasSelecionadas());
+
         //RePosicionar();// reposiciona as pecas do tabuleiro 
         //RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
 		if (!_Tabuleiro.VerificaPossibilidades()) Debug.Log("não existem nenhuma conexão possível");
@@ -537,31 +557,83 @@ public class LevelBehaviourScript : MonoBehaviour
 		// alimenta o pool de particulas
 		for(int i = 0; i < (_colunas * _linhas); i++){
 
-			ParticleSystem particula = Instantiate (_particulaPrefab) as ParticleSystem;
+			ParticleSystem particula = Instantiate (_particulaSaidaPrefab) as ParticleSystem;
 			particula.gameObject.SetActive (false);
 			particula.transform.parent = transform;
 			_particulasDeSaida.Add (particula);
 
 		}
+		// alimenta o pool de particulas coringa
+		for(int i = 0; i < (_colunas * _linhas); i++){
+
+			ParticleSystem particula = Instantiate (_particulaCoringaPrefab) as ParticleSystem;
+			particula.gameObject.SetActive (false);
+			particula.transform.parent = transform;
+			_particulasCoringa.Add (particula);
+
+		}
+
 		// preenche o tabuleiro
 		_Tabuleiro.transformPai = tabuleiro;
 		_Tabuleiro.Preencher (_colunas, _linhas);
 
 
 		// coloca as pecas pretas no tabuleiro
-		if (_posicoesPecasNegras.Count > 0) {
-			_qtdPecasNegas = _posicoesPecasNegras.Count;
-			PosicionarPecasNegras (_Tabuleiro.Tabuleiro);
+		if (_qtdPecasNegras > 0) {
+//			_qtdPecasNegas = _posicoesPecasNegras.Count;
+			PosicionarPecasNegras (_Tabuleiro.PecasAtivas);
 		}
 		// colocar as pecas fotes no tabuleiro
-		if (_posicoesPecasFortes.Count > 0) {
-			_qtdPecasFortes = _posicoesPecasFortes.Count;
-			PosicionarPecasFortes (_Tabuleiro.Tabuleiro);
+		if (_qtdPecasFortes > 0) {
+//			_qtdPecasFortes = _posicoesPecasFortes.Count;
+			PosicionarPecasFortes (_Tabuleiro.PecasAtivas);
 		}
-			
-
 
     }
+
+	// posiciona as pecas negras no tabuleiro
+	private void PosicionarPecasNegras(List<PecaBehaviourScript> pecas){
+		// cria uma nova lista
+		List<PecaBehaviourScript> novasPecas = new List<PecaBehaviourScript> ();
+		//preenche a lista com as pecas 
+		novasPecas.AddRange(pecas);
+		// varre a lista nova
+		for (int i = 0; i < _qtdPecasNegras; i++) {
+			// randomiza uma posicao da lista
+			int index = UnityEngine.Random.Range(0,novasPecas.Count);
+			// pega a peca
+			PecaBehaviourScript peca = novasPecas[index];
+			//transforma a peca em peca forte
+			peca.TransformarEmNegra();
+			// remove da lista
+			novasPecas.Remove(peca);
+
+		}
+
+	}
+
+	// posiciona as pecas fortes no tabuleiro
+	private void PosicionarPecasFortes(List<PecaBehaviourScript> pecas){
+		// cria uma nova lista
+		List<PecaBehaviourScript> novasPecas = new List<PecaBehaviourScript> ();
+		//preenche a lista com as pecas 
+		novasPecas.AddRange(pecas);
+		// varre a lista nova
+		for (int i = 0; i < _qtdPecasFortes; i++) {
+
+			// randomiza uma posicao da lista
+			int index = UnityEngine.Random.Range(0,novasPecas.Count);
+			// pega a peca
+			PecaBehaviourScript peca = novasPecas[index];
+			//transforma a peca em peca forte
+			peca.TransformarEmForte();
+			// remove da lista
+			novasPecas.Remove(peca);
+
+		}
+
+	}
+
 	// carrega as pecas que precisão de dois hits para sair 
 	private void PosicionarPecasFortes(PecaBehaviourScript[,] pecas){
 		
@@ -643,7 +715,8 @@ public class LevelBehaviourScript : MonoBehaviour
     {
         _dotsPrefabs = Resources.LoadAll<PecaBehaviourScript>(caminho + "circulos");
        // _reservatorioPrefab = Resources.Load<ContadorBehaviourScript>(caminho + "reservatorios/Reservatorio") as ContadorBehaviourScript;
-		_particulaPrefab = Resources.Load<ParticleSystem> (caminho + "particula/ParticulaSaida") as ParticleSystem;
+		_particulaSaidaPrefab = Resources.Load<ParticleSystem> (caminho + "particula/ParticulaSaida") as ParticleSystem;
+		_particulaCoringaPrefab = Resources.Load<ParticleSystem> (caminho + "particula/ParticulaTransformacaoCoringa") as ParticleSystem;
     }
 
     //carrega os recursos padrao

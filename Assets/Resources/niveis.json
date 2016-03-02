@@ -1,5 +1,5 @@
 [
-{
+	{
 	"metas":
 		[
 			{
@@ -24,26 +24,11 @@
 			}		
 		],
 		"tabuleiro":3,	
-		"objetivo": 1000,
+		"objetivo": 1500,
 		"chances": 25,
-		"negras" : [
-			
-		],
-		"fortes" :[
-			{
-			"coluna" :3,
-			"linha": 2
-			},
-			{
-			"coluna" :2,
-			"linha": 5
-			},
-			{
-			"coluna" :4,
-			"linha": 4
-			}
-		],
-		"contagiosas" :[]		
+		"negras" : 0,
+		"fortes" :25,
+		"contagiosas" :0
 	},
 	{
 	"metas":
@@ -67,194 +52,75 @@
 				"contador_id":4,
 				"minima": 10,
 				"maxima": 14
-			}		
-		],
-		"tabuleiro":2,	
-		"objetivo": 560,
-		"chances": 30,
-		"negras" : [
-			
-		],
-		"fortes" :[
-			{
-			"coluna" :0,
-			"linha": 2
-			},
-			{
-			"coluna" :3,
-			"linha": 4
-			},
-			{
-			"coluna" :2,
-			"linha": 4
-			},
-			{
-			"coluna" :4,
-			"linha": 4
-			},
-			{
-			"coluna" :1,
-			"linha": 4
-			},
-			{
-			"coluna" :2,
-			"linha": 2
-			},
-			{
-			"coluna" :3,
-			"linha": 1
-			}
-		],
-		"contagiosas" :[]		
-	},
-		{
-	
-	"metas":
-		[
-			{
-				"contador_id":1,
-				"minima": 10,
-				"maxima": 14
-			},
-			{
-				"contador_id":2,
-				"minima": 10,
-				"maxima": 14
-			},
-			{
-				"contador_id":3,
-				"minima": 10,
-				"maxima": 14
-			},
-			{
-				"contador_id":4,
-				"minima": 10,
-				"maxima": 14
-			}		
-		],
-		"tabuleiro":2,	
-		"objetivo": 560,
-		"chances": 30,
-		"negras" : [
-			
-		],
-		"fortes" :[			
-		],
-		"contagiosas" :[]	
-	},
-	{
-	
-	"metas":
-		[
-			{
-				"contador_id":1,
-				"minima": 14,
-				"maxima": 16
-			},
-			{
-				"contador_id":2,
-				"minima": 16,
-				"maxima": 20
-			},
-			{
-				"contador_id":3,
-				"minima": 26,
-				"maxima": 30
-			},
-			{
-				"contador_id":4,
-				"minima": 26,
-				"maxima": 30
-			}		
-		],
-		"tabuleiro":3,	
-		"objetivo": 1000,
-		"chances": 40,
-		"negras" : [
-			{
-			"coluna" :3,
-			"linha": 2
-			},
-			{
-			"coluna" :3,
-			"linha": 4
-			}
-		],
-		"fortes" :[
-		],
-		"contagiosas" :[]	
-	},
-	{
-	"metas":
-		[
-			{
-				"contador_id":1,
-				"minima": 16,
-				"maxima": 20
-			},
-			{
-				"contador_id":2,
-				"minima": 16,
-				"maxima": 20
-			},
-			{
-				"contador_id":3,
-				"minima": 26,
-				"maxima": 30
-			},
-			{
-				"contador_id":4,
-				"minima": 26,
-				"maxima": 30
-			}		
-		],
-		"tabuleiro":2,	
-		"objetivo": 1000,
-		"chances": 40,
-		"negras" : [
-			{
-			"coluna" :3,
-			"linha": 4
-			}
-		],
-		"fortes" :[
-		],
-		"contagiosas" :[]	
-	},
-	{
-	
-	"metas":
-		[
-			{
-				"contador_id":1,
-				"minima": 8,
-				"maxima": 12
-			},
-			{
-				"contador_id":2,
-				"minima": 8,
-				"maxima": 12
-			},
-			{
-				"contador_id":3,
-				"minima": 8,
-				"maxima": 12
-			},
-			{
-				"contador_id":4,
-				"minima": 8,
-				"maxima": 12
 			}		
 		],
 		"tabuleiro":1,	
-		"objetivo": 500,
-		"chances": 24,
-		,
-		"negras" : [
-			
+		"objetivo": 550,
+		"chances": 25,
+		"negras" : 0,
+		"fortes" :10,
+		"contagiosas" :0
+	},
+	{
+	"metas":
+		[
+			{
+				"contador_id":1,
+				"minima": 25,
+				"maxima": 30
+			},
+			{
+				"contador_id":2,
+				"minima": 25,
+				"maxima": 30
+			},
+			{
+				"contador_id":3,
+				"minima": 25,
+				"maxima": 30
+			},
+			{
+				"contador_id":4,
+				"minima": 25,
+				"maxima": 30
+			}		
 		],
-		"fortes" :[
+		"tabuleiro":3,	
+		"objetivo": 2000,
+		"chances": 40,
+		"negras" : 0,
+		"fortes" :25,
+		"contagiosas" :0
+	},
+	{
+	"metas":
+		[
+			{
+				"contador_id":1,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":2,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":3,
+				"minima": 16,
+				"maxima": 20
+			},
+			{
+				"contador_id":4,
+				"minima": 16,
+				"maxima": 20
+			}		
 		],
-		"contagiosas" :[]	
+		"tabuleiro":2,	
+		"objetivo": 1500,
+		"chances": 20,
+		"negras" : 10,
+		"fortes" :0,
+		"contagiosas" :0
 	}
 ]
