@@ -1,9 +1,6 @@
 ﻿using System;
 
-namespace AssemblyCSharp
-{
-	public interface EmptyInterface
+	public interface IPeca
 	{
+		
 	}
-}
-

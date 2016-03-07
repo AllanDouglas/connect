@@ -23,11 +23,11 @@
 				"maxima": 20
 			}		
 		],
-		"tabuleiro":3,	
+		"tabuleiro":2,	
 		"objetivo": 1500,
 		"chances": 25,
 		"negras" : 0,
-		"fortes" :25,
+		"fortes" :15,
 		"contagiosas" :0
 	},
 	{
@@ -116,10 +116,10 @@
 				"maxima": 20
 			}		
 		],
-		"tabuleiro":2,	
+		"tabuleiro":3,	
 		"objetivo": 1500,
 		"chances": 20,
-		"negras" : 10,
+		"negras" :5,
 		"fortes" :0,
 		"contagiosas" :0
 	}

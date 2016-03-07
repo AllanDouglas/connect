@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEngine.UI;
 
 
@@ -154,10 +155,5 @@ public class ContadorBehaviourScript : MonoBehaviour
 		this.metaUltrapassada.color = cor;
 		this.background.color = corDoBackground;
     }
-
-    void Update()
-    {
-        
-    }
-   
+		
 }

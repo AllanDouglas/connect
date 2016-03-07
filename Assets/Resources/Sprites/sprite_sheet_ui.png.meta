@@ -1,0 +1,167 @@
+fileFormatVersion: 2
+guid: 1820bf5200f2f9e48bf9da472408176b
+timeCreated: 1457219110
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: sprite_sheet_ui_0
+    21300002: sprite_sheet_ui_1
+    21300004: sprite_sheet_ui_2
+    21300006: sprite_sheet_ui_3
+    21300008: sprite_sheet_ui_4
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: sprite_sheet_ui_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 418
+        height: 339
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 209, y: -155.5}
+        - {x: 209, y: 155.5}
+        - {x: 207, y: 158.5}
+        - {x: 205, y: 162.5}
+        - {x: 201, y: 165.5}
+        - {x: 200, y: 165.5}
+        - {x: 198, y: 168.5}
+        - {x: 195, y: 169.5}
+        - {x: -195, y: 169.5}
+        - {x: -198, y: 168.5}
+        - {x: -206, y: 160.5}
+        - {x: -206, y: 159.5}
+        - {x: -208, y: 158.5}
+        - {x: -209, y: 155.5}
+        - {x: -209, y: -155.5}
+        - {x: -208, y: -158.5}
+        - {x: -206, y: -159.5}
+        - {x: -206, y: -160.5}
+        - {x: -200, y: -166.5}
+        - {x: -199, y: -166.5}
+        - {x: -198, y: -168.5}
+        - {x: -195, y: -169.5}
+        - {x: 195, y: -169.5}
+        - {x: 198, y: -168.5}
+        - {x: 205, y: -161.5}
+        - {x: 205, y: -160.5}
+    - name: sprite_sheet_ui_1
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 277
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -19, y: 19}
+        - {x: -19, y: -19}
+        - {x: 19, y: -19}
+        - {x: 19, y: 19}
+    - name: sprite_sheet_ui_2
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 231
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -19.5, y: 19}
+        - {x: -19.5, y: -19}
+        - {x: 19.5, y: -19}
+        - {x: 19.5, y: 18}
+        - {x: 18.5, y: 19}
+    - name: sprite_sheet_ui_3
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 231
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -19.5, y: 19}
+        - {x: -19.5, y: -19}
+        - {x: 19.5, y: -19}
+        - {x: 19.5, y: 18}
+        - {x: 18.5, y: 19}
+      - - {x: -11.5, y: 11}
+        - {x: 10.5, y: 11}
+        - {x: 10.5, y: -10}
+        - {x: -11.5, y: -10}
+    - name: sprite_sheet_ui_4
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 15
+        width: 371
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -182.5, y: 95}
+        - {x: -185.5, y: 93}
+        - {x: -185.5, y: -92}
+        - {x: -182.5, y: -95}
+        - {x: 185.5, y: -95}
+        - {x: 185.5, y: 95}
+    outline: []
+  spritePackingTag: sprites
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
