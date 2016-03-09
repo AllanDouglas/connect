@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 1820bf5200f2f9e48bf9da472408176b
-timeCreated: 1457219110
+timeCreated: 1457481895
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -9,6 +9,8 @@ TextureImporter:
     21300004: sprite_sheet_ui_2
     21300006: sprite_sheet_ui_3
     21300008: sprite_sheet_ui_4
+    21300010: sprite_sheet_ui_5
+    21300012: sprite_sheet_ui_6
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -59,44 +61,64 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 147
         width: 418
-        height: 339
+        height: 340
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: 209, y: -155.5}
-        - {x: 209, y: 155.5}
-        - {x: 207, y: 158.5}
-        - {x: 205, y: 162.5}
-        - {x: 201, y: 165.5}
-        - {x: 200, y: 165.5}
-        - {x: 198, y: 168.5}
-        - {x: 195, y: 169.5}
-        - {x: -195, y: 169.5}
-        - {x: -198, y: 168.5}
-        - {x: -206, y: 160.5}
-        - {x: -206, y: 159.5}
-        - {x: -208, y: 158.5}
-        - {x: -209, y: 155.5}
-        - {x: -209, y: -155.5}
-        - {x: -208, y: -158.5}
-        - {x: -206, y: -159.5}
-        - {x: -206, y: -160.5}
-        - {x: -200, y: -166.5}
-        - {x: -199, y: -166.5}
-        - {x: -198, y: -168.5}
-        - {x: -195, y: -169.5}
-        - {x: 195, y: -169.5}
-        - {x: 198, y: -168.5}
-        - {x: 205, y: -161.5}
-        - {x: 205, y: -160.5}
+      - - {x: 202, y: -164}
+        - {x: 204, y: -163}
+        - {x: 204, y: -161}
+        - {x: 207, y: -159}
+        - {x: 209, y: -154}
+        - {x: 209, y: 155}
+        - {x: 207, y: 160}
+        - {x: 204, y: 163}
+        - {x: 203, y: 165}
+        - {x: 201, y: 165}
+        - {x: 198, y: 168}
+        - {x: 197, y: 168}
+        - {x: 195, y: 170}
+        - {x: -195, y: 170}
+        - {x: -198, y: 169}
+        - {x: -206, y: 161}
+        - {x: -206, y: 160}
+        - {x: -208, y: 159}
+        - {x: -209, y: 156}
+        - {x: -209, y: -155}
+        - {x: -208, y: -158}
+        - {x: -206, y: -159}
+        - {x: -206, y: -160}
+        - {x: -201, y: -166}
+        - {x: -192, y: -170}
+        - {x: 193, y: -170}
+        - {x: 198, y: -168}
     - name: sprite_sheet_ui_1
       rect:
         serializedVersion: 2
-        x: 447
-        y: 277
+        x: 446
+        y: 425
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -17.5, y: 19}
+        - {x: -19.5, y: 17}
+        - {x: -19.5, y: -17}
+        - {x: -17.5, y: -19}
+        - {x: 18.5, y: -19}
+        - {x: 19.5, y: -18}
+        - {x: 19.5, y: 18}
+        - {x: 18.5, y: 19}
+    - name: sprite_sheet_ui_2
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 379
         width: 38
         height: 38
       alignment: 0
@@ -107,47 +129,30 @@ TextureImporter:
         - {x: -19, y: -19}
         - {x: 19, y: -19}
         - {x: 19, y: 19}
-    - name: sprite_sheet_ui_2
-      rect:
-        serializedVersion: 2
-        x: 448
-        y: 231
-        width: 39
-        height: 38
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -19.5, y: 19}
-        - {x: -19.5, y: -19}
-        - {x: 19.5, y: -19}
-        - {x: 19.5, y: 18}
-        - {x: 18.5, y: 19}
     - name: sprite_sheet_ui_3
       rect:
         serializedVersion: 2
         x: 500
-        y: 231
-        width: 39
+        y: 379
+        width: 38
         height: 38
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -19.5, y: 19}
-        - {x: -19.5, y: -19}
-        - {x: 19.5, y: -19}
-        - {x: 19.5, y: 18}
-        - {x: 18.5, y: 19}
-      - - {x: -11.5, y: 11}
-        - {x: 10.5, y: 11}
-        - {x: 10.5, y: -10}
-        - {x: -11.5, y: -10}
+      - - {x: -19, y: 19}
+        - {x: -19, y: -19}
+        - {x: 19, y: -19}
+        - {x: 19, y: 19}
+      - - {x: -11, y: 11}
+        - {x: 11, y: 11}
+        - {x: 11, y: -10}
+        - {x: -11, y: -10}
     - name: sprite_sheet_ui_4
       rect:
         serializedVersion: 2
         x: 434
-        y: 15
+        y: 163
         width: 371
         height: 190
       alignment: 0
@@ -155,11 +160,47 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
       - - {x: -182.5, y: 95}
-        - {x: -185.5, y: 93}
-        - {x: -185.5, y: -92}
-        - {x: -182.5, y: -95}
+        - {x: -185.5, y: 92}
+        - {x: -185.5, y: -95}
         - {x: 185.5, y: -95}
-        - {x: 185.5, y: 95}
+        - {x: 185.5, y: 92}
+        - {x: 182.5, y: 95}
+    - name: sprite_sheet_ui_5
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 419
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -207.5, y: 57}
+        - {x: -209.5, y: 56}
+        - {x: -209.5, y: -56}
+        - {x: -207.5, y: -57}
+        - {x: 206.5, y: -57}
+        - {x: 209.5, y: -54}
+        - {x: 209.5, y: 54}
+        - {x: 207.5, y: 57}
+    - name: sprite_sheet_ui_6
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 14
+        width: 389
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -194.5, y: 50}
+        - {x: -194.5, y: -48}
+        - {x: -192.5, y: -50}
+        - {x: 192.5, y: -50}
+        - {x: 194.5, y: -48}
+        - {x: 194.5, y: 50}
     outline: []
   spritePackingTag: sprites
   userData: 

@@ -2,8 +2,15 @@
 using UnityEngine.UI;
 using System.Collections;
 
+public enum Especiais
+{
+	FORTES, NEGRAS
+}
+
 public class DicaInicialBehaviourScript : MonoBehaviour
 {
+
+
 
 	private Vector2 posicaoDeSaida;
 
@@ -13,6 +20,25 @@ public class DicaInicialBehaviourScript : MonoBehaviour
 
 	public Text meta_1, meta_2, meta_3, meta_4;
 
+	public GameObject EspecialPanel, PecaForte, PecaNegra;
+
+	private Especiais especial;
+
+	public Especiais Especial {
+		set { especial = value; 
+
+			EspecialPanel.SetActive (true);
+
+			if (especial == Especiais.FORTES) {
+				PecaForte.SetActive (true);
+				PecaNegra.SetActive (false);
+			} else {
+				PecaForte.SetActive (false);
+				PecaNegra.SetActive (true);
+			}
+
+		} get{  return especial; }
+	}
 
 	private Animator _animator; 
 
@@ -21,6 +47,10 @@ public class DicaInicialBehaviourScript : MonoBehaviour
 	{
 
 		_animator = GetComponent<Animator> ();
+
+		EspecialPanel.SetActive (false);
+		PecaForte.SetActive(false);
+		PecaNegra.SetActive (false);
 
 	}	
 

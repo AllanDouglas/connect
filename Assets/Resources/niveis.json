@@ -25,7 +25,7 @@
 		],
 		"tabuleiro":2,	
 		"objetivo": 1500,
-		"chances": 25,
+		"chances": 35,
 		"negras" : 0,
 		"fortes" :15,
 		"contagiosas" :0
@@ -56,9 +56,9 @@
 		],
 		"tabuleiro":1,	
 		"objetivo": 550,
-		"chances": 25,
+		"chances": 20,
 		"negras" : 0,
-		"fortes" :10,
+		"fortes" :0,
 		"contagiosas" :0
 	},
 	{
@@ -86,10 +86,10 @@
 			}		
 		],
 		"tabuleiro":3,	
-		"objetivo": 2000,
+		"objetivo": 1500,
 		"chances": 40,
 		"negras" : 0,
-		"fortes" :25,
+		"fortes" :20,
 		"contagiosas" :0
 	},
 	{
@@ -118,7 +118,7 @@
 		],
 		"tabuleiro":3,	
 		"objetivo": 1500,
-		"chances": 20,
+		"chances": 30,
 		"negras" :5,
 		"fortes" :0,
 		"contagiosas" :0

@@ -272,6 +272,7 @@ public class LevelBehaviourScript : MonoBehaviour
 		// fim das configurações do tabuleiro
 
 
+
         // metas 
         ArrayList metas = nivel["metas"] as ArrayList;
 
@@ -519,6 +520,10 @@ public class LevelBehaviourScript : MonoBehaviour
 		//remove o ingame 
 		//this.InGameUI.SetActive(false);
 		tabuleiro.gameObject.SetActive(false);
+
+		GameOverUI.fortes.text = "Restantes: " + _qtdPecasFortes;
+		GameOverUI.negras.text = "Restantes: " + _qtdPecasNegras;
+
         GameOverUI.gameObject.SetActive(true);
     }
 
@@ -563,11 +568,13 @@ public class LevelBehaviourScript : MonoBehaviour
 
 		// coloca as pecas pretas no tabuleiro
 		if (_qtdPecasNegras > 0) {
+			
 			//			_qtdPecasNegas = _posicoesPecasNegras.Count;
 			PosicionarPecasNegras (_Tabuleiro.PecasAtivas);
-		}
+		}else
 		// colocar as pecas fotes no tabuleiro
 		if (_qtdPecasFortes > 0) {
+				
 			//			_qtdPecasFortes = _posicoesPecasFortes.Count;
 			PosicionarPecasFortes (_Tabuleiro.PecasAtivas);
 		}
@@ -586,9 +593,15 @@ public class LevelBehaviourScript : MonoBehaviour
 
         //Configura o nivel
         ConfigurarNivel();
-		DicaInicial.objetivo.text = "Objetivo: " + _objetivo;
+
+		DicaInicial.objetivo.text = _objetivo+" pontos" ;
 		DicaInicial.movimento.text = "Com " + _chances+" movimentos";
 
+		if(_qtdPecasFortes > 0)
+			DicaInicial.Especial =Especiais.FORTES;
+		else if(_qtdPecasNegras > 0)
+			DicaInicial.Especial =Especiais.NEGRAS;
+		
 		DicaInicial.meta_1.text = reservatorios [0].meta.text;
 		DicaInicial.meta_2.text = reservatorios [1].meta.text;
 		DicaInicial.meta_3.text = reservatorios [2].meta.text;
