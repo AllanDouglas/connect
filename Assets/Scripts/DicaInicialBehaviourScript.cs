@@ -27,15 +27,15 @@ public class DicaInicialBehaviourScript : MonoBehaviour
 	public Especiais Especial {
 		set { especial = value; 
 
-			EspecialPanel.SetActive (true);
-
-			if (especial == Especiais.FORTES) {
-				PecaForte.SetActive (true);
-				PecaNegra.SetActive (false);
-			} else {
-				PecaForte.SetActive (false);
-				PecaNegra.SetActive (true);
-			}
+//			//EspecialPanel.SetActive (true);
+//
+//			if (especial == Especiais.FORTES) {
+//				PecaForte.SetActive (true);
+//				PecaNegra.SetActive (false);
+//			} else {
+//				PecaForte.SetActive (false);
+//				PecaNegra.SetActive (true);
+//			}
 
 		} get{  return especial; }
 	}
@@ -48,9 +48,9 @@ public class DicaInicialBehaviourScript : MonoBehaviour
 
 		_animator = GetComponent<Animator> ();
 
-		EspecialPanel.SetActive (false);
-		PecaForte.SetActive(false);
-		PecaNegra.SetActive (false);
+		//EspecialPanel.SetActive (false);
+		//PecaForte.SetActive(false);
+		//PecaNegra.SetActive (false);
 
 	}	
 

@@ -8,6 +8,8 @@ public class InGameUIBehaviourScript : MonoBehaviour
 	public Text pontos;
 	public Text objetivo;
 	public Text movimentos;
+	public Text pecasForteRestantes;
+	public Text pecasNegrasRestantes;
 
 	[Header("Slider dos pontos")]
 	public Slider barraDepontos;

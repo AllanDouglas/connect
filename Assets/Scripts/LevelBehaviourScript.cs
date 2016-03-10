@@ -244,17 +244,17 @@ public class LevelBehaviourScript : MonoBehaviour
 		case 3:
 			_colunas = 6;
 			_linhas = 6;
-			limitador.transform.position = new Vector2 (0, -4);
+			limitador.transform.position = new Vector2 (0, -3);
                 break;
             case 2:
                 _colunas = 5;
                 _linhas = 5;
-			limitador.transform.position = new Vector2 (0, -2.56f);
+			limitador.transform.position = new Vector2 (0, -1.56f);
                 break;
             case 1:
                 _colunas = 4;
                 _linhas = 4;
-			limitador.transform.position = new Vector2 (0, -2.56f);
+			limitador.transform.position = new Vector2 (0, -1.56f);
                 break;
         }
 		//configurações de tabuleiro
@@ -268,6 +268,10 @@ public class LevelBehaviourScript : MonoBehaviour
 		float pecasNegras = (float) nivel["negras"];
 		_qtdPecasNegras = (int)pecasNegras;
 		//_posicoesPecasNegras = nivel["negras"] as ArrayList;
+
+
+		InGameUI.pecasForteRestantes.text = "X " + pecasFortes;
+		InGameUI.pecasNegrasRestantes.text = "X " + pecasNegras;
 
 		// fim das configurações do tabuleiro
 
@@ -468,6 +472,16 @@ public class LevelBehaviourScript : MonoBehaviour
 		_Tabuleiro.Reposicionar();
 		_Tabuleiro.Repreencher ();
 
+		List<PecaBehaviourScript> pecasNegras = _Tabuleiro.PecasAtivas.FindAll (peca => {
+			return peca.Condicao == PecaBehaviourScript.CondicaoEspecial.NEGRA;
+		});
+
+		_qtdPecasNegrasRestantes = pecasNegras.Count;
+
+		InGameUI.pecasForteRestantes.text = "X " + _qtdPecasFortes;
+		InGameUI.pecasNegrasRestantes.text = "X " + _qtdPecasNegrasRestantes;
+
+
 		// yield return new WaitForSeconds (0.5f);
 		_jogando = true;
 		yield return new WaitForSeconds(0);
@@ -522,7 +536,7 @@ public class LevelBehaviourScript : MonoBehaviour
 		tabuleiro.gameObject.SetActive(false);
 
 		GameOverUI.fortes.text = "Restantes: " + _qtdPecasFortes;
-		GameOverUI.negras.text = "Restantes: " + _qtdPecasNegras;
+		GameOverUI.negras.text = "Restantes: " + _qtdPecasNegrasRestantes;
 
         GameOverUI.gameObject.SetActive(true);
     }
