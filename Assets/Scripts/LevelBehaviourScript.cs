@@ -27,6 +27,8 @@ public class LevelBehaviourScript : MonoBehaviour
 
 	[Header("Interface de Dica Inicial")]
 	public DicaInicialBehaviourScript DicaInicial;
+	[Header("Interface de Dica")]
+	public DicaBehaviourScript Dica;
 
     [Header("Interface de Pause")]
     public PauseGameBehaviourScript PauseUI;
@@ -46,6 +48,12 @@ public class LevelBehaviourScript : MonoBehaviour
 	[Header("Limitador")]
 	public Collider2D limitador;
 
+	[Header("Audio de clipes")]
+	public AudioClip ac_selecao;
+	public AudioClip ac_mensagem;
+	public AudioClip ac_vitoria;
+	public AudioClip ac_metaAtingida;
+
 
     //Grid
 	private TabuleiroScript _Tabuleiro = new TabuleiroScript(); // script do tabuleiro
@@ -54,7 +62,7 @@ public class LevelBehaviourScript : MonoBehaviour
     private ContadorBehaviourScript _reservatorioPrefab; // prafab do reservatorio
 	private ParticleSystem _particulaSaidaPrefab; // prafab da particula
 	private ParticleSystem _particulaCoringaPrefab; // prefab da particula de coringa
-
+	private AudioSource _audioSourceFx; // fonte de audio dos efeitos sonoros
 
 	private GradeBehaiourScript[,] _pecasNegrasGrid; // grid para armezenar as pecas negraas quando houverem
 	private List<ParticleSystem> _particulasDeSaida = new List<ParticleSystem>() ; // pool de particulas de saida
@@ -108,7 +116,7 @@ public class LevelBehaviourScript : MonoBehaviour
 
 		_qtdPecasNegrasRestantes = pecasNegras.Count;
 
-		Debug.Log ("### pecas fortes "+_qtdPecasFortes+", quantidade de pecas negras "+pecasNegras.Count);
+		//Debug.Log ("### pecas fortes "+_qtdPecasFortes+", quantidade de pecas negras "+pecasNegras.Count);
 		
 		return (_metas == _metasAtingidas & _pontos >= _objetivo & 
 			_chances >= 0 & pecasNegras.Count == 0 & _qtdPecasFortes == 0) ;
@@ -123,12 +131,14 @@ public class LevelBehaviourScript : MonoBehaviour
         //verifica se o jogo está ativo
         if (!_jogando) return;
 
-		Debug.Log (peca);
+		//Debug.Log (peca);
 
         //verifica se a peca já está dentro das pecas selecionadas 
 		if (!_pecasSelecionadas.Contains(peca) & !peca.EhNegra())
         {
-			
+
+
+
             int quantidadeDeElementos = _pecasSelecionadas.Count;
 
             //pega a peca atual
@@ -141,6 +151,10 @@ public class LevelBehaviourScript : MonoBehaviour
 					_corDaLinha = Color.gray;
 				else
 					_corDaLinha = peca.cor;
+
+				// toca o som da peca selecionada
+				_audioSourceFx.PlayOneShot(this.ac_selecao);
+
             }
             else
             //se a lista não está vazia verifica se a nova peca está             
@@ -165,6 +179,9 @@ public class LevelBehaviourScript : MonoBehaviour
 
                     )
                 {
+
+					// toca o som da peca selecionada
+					_audioSourceFx.PlayOneShot(this.ac_selecao);
 						
 					//desenhando a linha
                     //adicionando  line renderer na ultima peca adicionada 
@@ -244,17 +261,17 @@ public class LevelBehaviourScript : MonoBehaviour
 		case 3:
 			_colunas = 6;
 			_linhas = 6;
-			limitador.transform.position = new Vector2 (0, -3);
+			limitador.transform.position = new Vector2 (0, -4);
                 break;
             case 2:
                 _colunas = 5;
                 _linhas = 5;
-			limitador.transform.position = new Vector2 (0, -1.56f);
+			limitador.transform.position = new Vector2 (0, -2.56f);
                 break;
             case 1:
                 _colunas = 4;
                 _linhas = 4;
-			limitador.transform.position = new Vector2 (0, -1.56f);
+			limitador.transform.position = new Vector2 (0, -2.56f);
                 break;
         }
 		//configurações de tabuleiro
@@ -320,15 +337,31 @@ public class LevelBehaviourScript : MonoBehaviour
     // pontua
     private void Pontuar(int quantidade)
     {
+		
 		// adiciona a quantidade de pontos
-        _pontos += (quantidade * 10);
+        int pontos = (quantidade * 10);
 		// pega a quantidade de pontos diferenção de 3
 		if (quantidade > 3) {
 			int extraPontos = quantidade - 3;
 			extraPontos *= 10;
 			// adiciona os pontos extras
-			_pontos += extraPontos;
+			pontos += extraPontos;		
+			if (quantidade > 4) {
+				if (quantidade == 5) {
+					Dica.dica.text = "Você está indo muito bem: " + pontos.ToString () + " pontos";
+				} else if (quantidade >= 6 & quantidade <= 7) {
+					Dica.dica.text = "Você é inacreditável: " + pontos.ToString () + " pontos";
+				} else if (quantidade >= 8 & quantidade <= 9) {
+					Dica.dica.text = "Isso deveria ser impossível: " + pontos.ToString () + " pontos";
+				} else if (quantidade >= 10) {
+					Dica.dica.text = "Super, ultra, mega. Fantasticooo!: " + pontos.ToString () + " pontos";			
+				}
+				Dica.Entrar ();
+				_audioSourceFx.PlayOneShot (ac_mensagem);
+			}
 		}
+
+		_pontos += pontos; // incrementa a quantidade nova ao total atual
 
 		InGameUI.barraDepontos.value = _pontos; // pontos 
 		InGameUI.pontos.text = _pontos.ToString();
@@ -346,7 +379,7 @@ public class LevelBehaviourScript : MonoBehaviour
 	private IEnumerator TratarPecasSelecionadas(){
 
 		_jogando = false;
-
+		Debug.Log ("não pode ligar");
 		//verifica a quantidade de pecas ativas, ser for maior que 1 
 		if (_pecasSelecionadas.Count > 1)
 		{
@@ -482,9 +515,27 @@ public class LevelBehaviourScript : MonoBehaviour
 		InGameUI.pecasNegrasRestantes.text = "X " + _qtdPecasNegrasRestantes;
 
 
-		// yield return new WaitForSeconds (0.5f);
+		yield return new WaitForSeconds (.5f);
 		_jogando = true;
-		yield return new WaitForSeconds(0);
+		yield return new WaitForSeconds (1f);
+		//RePosicionar();// reposiciona as pecas do tabuleiro 
+		//RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
+		if (!_Tabuleiro.VerificaPossibilidades ()) {
+			_jogando = false;
+			//Debug.Log ("não existem nenhuma conexão possível");
+			Dica.dica.text = "Não ha nenhum movimento possível. Misturando o tabuleiro.";
+			Dica.Entrar();
+			yield return new WaitForSeconds (0.5f);
+			while (!_Tabuleiro.VerificaPossibilidades ()) {
+				_Tabuleiro.Misturar ();
+				yield return new WaitForSeconds (0.2f);
+			}
+			_jogando = true;
+		}
+
+
+
+		//yield return new WaitForSeconds(0);
 	}
 
     //trata o evento de quando o toque é liberado
@@ -492,13 +543,14 @@ public class LevelBehaviourScript : MonoBehaviour
     private void ToqueLiberadoHandler()
     {
         //verifica se o jogo está ativo
+
+
+
         if (!_jogando) return;
 
 		StartCoroutine (TratarPecasSelecionadas());
 
-        //RePosicionar();// reposiciona as pecas do tabuleiro 
-        //RePreencher(); // recoloca as pecas que estão faltando no tabuleiro
-		if (!_Tabuleiro.VerificaPossibilidades()) Debug.Log("não existem nenhuma conexão possível");
+        
     }
    
     // controla a quantidade de metas atingidas
@@ -604,6 +656,8 @@ public class LevelBehaviourScript : MonoBehaviour
         _jogando = false;
         Time.timeScale = 1.0f;
 
+		//captura o component de audio source
+		_audioSourceFx = GetComponent<AudioSource>();
 
         //Configura o nivel
         ConfigurarNivel();

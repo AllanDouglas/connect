@@ -166,7 +166,10 @@ public class TabuleiroScript
 					PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
 					PecaBehaviourScript pecaDeCima = _tabuleiro[x, y + 1];
 
-					if (pecaAtual.id == pecaDeCima.id) return true; // pecas iguais retornar true 
+					if (pecaAtual.id == pecaDeCima.id &
+						pecaAtual.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA &
+						pecaDeCima.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA) 
+						return true; // pecas iguais retornar true 
 
 				}
 				//verifica a peca da direita
@@ -176,7 +179,10 @@ public class TabuleiroScript
 					PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
 					PecaBehaviourScript pecaDaDireita = _tabuleiro[x + 1, y];
 
-					if (pecaAtual.id == pecaDaDireita.id) return true; // pecas iguais retornar true 
+					if (pecaAtual.id == pecaDaDireita.id &
+						pecaAtual.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA &
+						pecaDaDireita.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA
+					) return true; // pecas iguais retornar true 
 				}
 
 			}
