@@ -28,7 +28,8 @@ public class LevelBehaviourScript : MonoBehaviour
 	[Header("Interface de Dica Inicial")]
 	public DicaInicialBehaviourScript DicaInicial;
 	[Header("Interface de Dica")]
-	public DicaBehaviourScript Dica;
+	public DicaBehaviourScript InformacaoUI;
+	public DicaBehaviourScript InformacaoMetaUI;
 
     [Header("Interface de Pause")]
     public PauseGameBehaviourScript PauseUI;
@@ -348,15 +349,15 @@ public class LevelBehaviourScript : MonoBehaviour
 			pontos += extraPontos;		
 			if (quantidade > 4) {
 				if (quantidade == 5) {
-					Dica.dica.text = "Você está indo muito bem: " + pontos.ToString () + " pontos";
+					InformacaoUI.dica.text = "Você está indo muito bem: " + pontos.ToString () + " pontos";
 				} else if (quantidade >= 6 & quantidade <= 7) {
-					Dica.dica.text = "Você é inacreditável: " + pontos.ToString () + " pontos";
+					InformacaoUI.dica.text = "Você é inacreditável: " + pontos.ToString () + " pontos";
 				} else if (quantidade >= 8 & quantidade <= 9) {
-					Dica.dica.text = "Isso deveria ser impossível: " + pontos.ToString () + " pontos";
+					InformacaoUI.dica.text = "Isso deveria ser impossível: " + pontos.ToString () + " pontos";
 				} else if (quantidade >= 10) {
-					Dica.dica.text = "Super, ultra, mega. Fantasticooo!: " + pontos.ToString () + " pontos";			
+					InformacaoUI.dica.text = "Super, ultra, mega. Fantasticooo!: " + pontos.ToString () + " pontos";			
 				}
-				Dica.Entrar ();
+				InformacaoUI.Entrar ();
 				_audioSourceFx.PlayOneShot (ac_mensagem);
 			}
 		}
@@ -523,8 +524,8 @@ public class LevelBehaviourScript : MonoBehaviour
 		if (!_Tabuleiro.VerificaPossibilidades ()) {
 			_jogando = false;
 			//Debug.Log ("não existem nenhuma conexão possível");
-			Dica.dica.text = "Não ha nenhum movimento possível. Misturando o tabuleiro.";
-			Dica.Entrar();
+			InformacaoUI.dica.text = "Não ha nenhum movimento possível. Misturando o tabuleiro.";
+			InformacaoUI.Entrar();
 			yield return new WaitForSeconds (0.5f);
 			while (!_Tabuleiro.VerificaPossibilidades ()) {
 				_Tabuleiro.Misturar ();
@@ -556,14 +557,17 @@ public class LevelBehaviourScript : MonoBehaviour
     // controla a quantidade de metas atingidas
     private void MetaAtingida(ContadorBehaviourScript contador)
     {
-       
         _metasAtingidas++;
 
 		if(VerificarMetas()) 
         {
 			LevelClear();
         }
-
+		// exibe informacao
+		InformacaoMetaUI.cor = contador.cor;
+		InformacaoMetaUI.dica.text = "Atenção! Meta atingida";
+		InformacaoMetaUI.Entrar ();
+		_audioSourceFx.PlayOneShot (ac_mensagem);
     }
     // controla quando a meta é ultrapassada
     private void MetaUltrapassada(ContadorBehaviourScript contador)

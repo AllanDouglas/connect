@@ -159,29 +159,36 @@ public class TabuleiroScript
 		{ // para cada coluna
 			for (int y = 0; y < _linhas; y++)
 			{// para cada linha
+				// verifica se esta peca tem o mesmo tipo da peca de cima
+				PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
+
+				if (pecaAtual.Condicao == PecaBehaviourScript.CondicaoEspecial.CORINGA)
+					return true;
+
 				//verifica a peca de cima se for possivel
 				if (y + 1 < _linhas)
 				{
-					// verifica se esta peca tem o mesmo tipo da peca de cima
-					PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
+					
 					PecaBehaviourScript pecaDeCima = _tabuleiro[x, y + 1];
 
+					
 					if (pecaAtual.id == pecaDeCima.id &
 						pecaAtual.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA &
-						pecaDeCima.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA) 
+						pecaDeCima.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA |
+						pecaDeCima.Condicao == PecaBehaviourScript.CondicaoEspecial.CORINGA) 
 						return true; // pecas iguais retornar true 
 
 				}
 				//verifica a peca da direita
 				if (x + 1 < _colunas)
 				{
-					// verifica se esta peca tem o mesmo tipo da peca da direita
-					PecaBehaviourScript pecaAtual = _tabuleiro[x, y];
+					
 					PecaBehaviourScript pecaDaDireita = _tabuleiro[x + 1, y];
 
 					if (pecaAtual.id == pecaDaDireita.id &
 						pecaAtual.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA &
-						pecaDaDireita.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA
+						pecaDaDireita.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA |
+						pecaDaDireita.Condicao == PecaBehaviourScript.CondicaoEspecial.CORINGA
 					) return true; // pecas iguais retornar true 
 				}
 
