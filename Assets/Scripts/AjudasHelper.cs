@@ -16,6 +16,7 @@ public class AjudasHelper : MonoBehaviour {
     private static int _sortes; // quantidades de ajuda do tipo sorte
     private static int _misturar; // quantidade de ajudas do tipo misturar
     private static int _removeQuatrante; // quantidade de ajudas do tipo remover quadrante
+	private static int _removerTipo; // quantidade de ajudas do tipo remover por tipo
 
     // adciona a quantidade da ajuda passada
     public static void UsarAjuda(Ajudas ajuda)
@@ -107,6 +108,7 @@ public class AjudasHelper : MonoBehaviour {
         }
         return _misturar;
     }
+
     // adiciona a quatidade de ajudas do tipo misturar
     public static void Misturar(int quantidade)
     {
@@ -184,5 +186,22 @@ public class AjudasHelper : MonoBehaviour {
     {
         MaisCinco(-1);
     }
+	//retorna a quantidade de ajudas mais 5
+	public static int RemoverTipo()
+	{
+		if (_removerTipo == 0)
+		{
+			_removerTipo = PlayerPrefs.GetInt("_removerTipo_");
+		}
+		return _removerTipo;
+	}
+	// adiciona quantidade de ajudas do tipo mais cinco
+	public static void RemoverTipo(int quantidade)
+	{
+		_removerTipo += quantidade;
+		PlayerPrefs.SetInt("_removerTipo_", _removerTipo);
+
+	}
+
 
 }
