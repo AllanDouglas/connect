@@ -27,9 +27,11 @@ public class LevelBehaviourScript : MonoBehaviour
 
 	[Header("Interface de Dica Inicial")]
 	public DicaInicialBehaviourScript DicaInicial;
+
 	[Header("Interface de Dica")]
 	public DicaBehaviourScript InformacaoUI;
 	public DicaBehaviourScript InformacaoMetaUI;
+	public DicaBehaviourScript InformacaoAjudaUI;
 
     [Header("Interface de Pause")]
     public PauseGameBehaviourScript PauseUI;
@@ -64,16 +66,17 @@ public class LevelBehaviourScript : MonoBehaviour
 	private ParticleSystem _particulaSaidaPrefab; // prafab da particula
 	private ParticleSystem _particulaCoringaPrefab; // prefab da particula de coringa
 	private AudioSource _audioSourceFx; // fonte de audio dos efeitos sonoros
-
+	private Color _corDaLinha; // cor da linha        
+	private int _colunas; // quantidade de colunas
+	private int _linhas; // quantidade de linhas
+	//prefabs
 	private GradeBehaiourScript[,] _pecasNegrasGrid; // grid para armezenar as pecas negraas quando houverem
 	private List<ParticleSystem> _particulasDeSaida = new List<ParticleSystem>() ; // pool de particulas de saida
 	private List<ParticleSystem> _particulasCoringa = new List<ParticleSystem>(); // pool de particulas de transformação de coringa
     private List<ContadorBehaviourScript> _listaDeReservatoriosAtivos = new List<ContadorBehaviourScript>(); // lista dos reservatorios    
     private List<PecaBehaviourScript> _dotsAtivas = new List<PecaBehaviourScript>(); // pecas que estão no grid    
     private List<PecaBehaviourScript> _pecasSelecionadas = new List<PecaBehaviourScript>(); // pecas que foram tocadas
-    private Color _corDaLinha; // cor da linha        
-    private int _colunas; // quantidade de colunas
-    private int _linhas; // quantidade de linhas
+	private PreDicaBehaviourScritp preDica; // prefab do predica
 
     //Nivel
 	private Hashtable _informacaoDoNivel; // informacoes do nivel
@@ -88,6 +91,10 @@ public class LevelBehaviourScript : MonoBehaviour
 	private int _qtdPecasFortes = 0; // quantidade de pecas negras no tabuleiro
 	private int _qtdPecasNegrasRestantes = 0; // quantidade de pecas negras restantes no tabuleiro 
     private bool _jogando = true;
+
+	// flags da ajuda
+	private bool _removerQuadrante = false;
+	private bool _removerTipo = false;
 
     // Use this for initialization
     void Start()
@@ -130,18 +137,24 @@ public class LevelBehaviourScript : MonoBehaviour
 
 
         //verifica se o jogo está ativo
-        if (!_jogando) return;
+        //if (!_jogando) return;
 
-		//Debug.Log (peca);
+		if (peca.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA & _removerQuadrante) {
+			_removerQuadrante = false;
+			RemoverQuadrante (peca);
+			return;
+		}
 
-        //verifica se a peca já está dentro das pecas selecionadas 
+		if (peca.Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA & _removerTipo) {
+			_removerTipo = false;
+			RemoverTipo (peca);
+			return;
+		}
+		//verifica se a peca já está dentro das pecas selecionadas 
 		if (!_pecasSelecionadas.Contains(peca) & !peca.EhNegra())
         {
-
-
-
+			
             int quantidadeDeElementos = _pecasSelecionadas.Count;
-
             //pega a peca atual
             //adiciona a lista de selecionadas se a lista está vazia
             if (quantidadeDeElementos == 0)
@@ -291,9 +304,18 @@ public class LevelBehaviourScript : MonoBehaviour
 		InGameUI.pecasForteRestantes.text = "X " + pecasFortes;
 		InGameUI.pecasNegrasRestantes.text = "X " + pecasNegras;
 
+		if (pecasFortes > 0 & PlayerPrefs.GetInt("_tutorial_pecas_fortes") != 2) {
+			Debug.Log ("carregando a predica das pecas fortes");
+			CarregaPreDicaForte ();
+			PlayerPrefs.SetInt ("_tutorial_pecas_fortes",1);
+		}
+
+		if (pecasNegras > 0 & PlayerPrefs.GetInt("_tutorial_pecas_negras") != 2) {
+			Debug.Log ("carregando a predica das pecas negras");
+			PlayerPrefs.SetInt ("_tutorial_pecas_negras",1);
+			CarregaPreDicaNegra ();
+		}
 		// fim das configurações do tabuleiro
-
-
 
         // metas 
         ArrayList metas = nivel["metas"] as ArrayList;
@@ -544,14 +566,8 @@ public class LevelBehaviourScript : MonoBehaviour
     private void ToqueLiberadoHandler()
     {
         //verifica se o jogo está ativo
-
-
-
-        if (!_jogando) return;
-
-		StartCoroutine (TratarPecasSelecionadas());
-
-        
+		 if (!_jogando) return;
+		StartCoroutine (TratarPecasSelecionadas());        
     }
    
     // controla a quantidade de metas atingidas
@@ -614,9 +630,9 @@ public class LevelBehaviourScript : MonoBehaviour
         //ativa ou não a interface de pause
         PauseUI.gameObject.SetActive(!_jogando);
 		// altera a visibilidade da interface de ingameui
-		this.InGameUI.gameObject.SetActive (_jogando);
+		//this.InGameUI.gameObject.SetActive (_jogando);
 		// altera a visivilidade do tabuleiro
-		this.tabuleiro.gameObject.SetActive (_jogando);
+		//this.tabuleiro.gameObject.SetActive (_jogando);
     }
 
     public void Reiniciar()
@@ -716,6 +732,17 @@ public class LevelBehaviourScript : MonoBehaviour
 
 		}
 
+
+		// exibe dicas
+
+		if (preDica != null) {
+
+			Debug.Log ("Exibe a predica");
+
+			preDica.gameObject.SetActive (true);
+		}
+
+		DicaInicial.gameObject.SetActive (true);
 
 
     }
@@ -832,12 +859,180 @@ public class LevelBehaviourScript : MonoBehaviour
     {
         CarregarRecursos(PADRAO);
     }
+	// configura o proximo toque para remover quadrante
+	public void RemoverQuadrante(){
+
+
+		// verific se ainda tem chances
+		//-- remover comentario if( AjudasHelper.RemoverQuadrante() > 0 & !_jogando) return;
+
+		_removerTipo = false;
+		_removerQuadrante = true;
+
+		AjudasHelper.RemoverQuadrante (-1);
+
+		InformacaoAjudaUI.dica.text = "Selecione um objeto";
+		InformacaoAjudaUI.Entrar ();
+
+	}
+
+	// remove quadrante 
+	private void RemoverQuadrante(PecaBehaviourScript peca){
+		
+		List<PecaBehaviourScript> pecasList = new List<PecaBehaviourScript> ();
+		int QtdPecasParaPontos = 0;
+		// recupera as pecas no quadrande
+		/*
+			*###
+			*#O#
+			*###
+		*/
+		// intera até 9
+		int xInicial = peca.x - 1;
+		int yInicial = peca.y - 1;
+
+		for(int x = 0;x < 3; x++){ // colunas
+
+			// verifica se o x está dentro do tabuleiro
+			if(xInicial + x < 0 | xInicial + x >= _colunas ) continue;
+
+			for (int y = 0; y < 3; y++) { // linhas
+				if(yInicial + y < 0 | yInicial + y >= _linhas ) continue;
+
+				//posicao
+				int xPosicao = xInicial + x;
+				int yPosicao = yInicial + y;
+				//recupera a peca
+				PecaBehaviourScript pecaAtual =  _Tabuleiro.Tabuleiro[xPosicao,yPosicao];
+
+				// verifica se a peca atual é a mesma da peca ou se ela ainda não existe dentro do array de pecas selecinadas
+				if (pecaAtual != peca & !pecasList.Contains(pecaAtual)) {
+					// se for diferente adiciona a peca dentro da lista de pecas selecionadas
+					pecasList.Add(pecaAtual);
+					// incrementa a quantidade de pecas para pontuar
+					QtdPecasParaPontos++;
+				}
+
+			}
+		}
+
+		// lista que vai armazenar as pecas do tipo forte
+		List<PecaBehaviourScript> pecasFortes = new List<PecaBehaviourScript> ();
+		int indexPeca = 0;
+		for (int i = 0; i < pecasList.Count; i++) {
+
+			ParticleSystem particula = _particulasDeSaida [i];
+			particula.gameObject.SetActive (false);
+
+
+			PecaBehaviourScript _peca = pecasList [indexPeca];
+
+			particula.transform.position = _peca.transform.position;
+			particula.startColor = _peca.cor;
+			particula.gameObject.SetActive (true);
+			indexPeca++;
+			// verifica se a peca é forte
+			if (_peca.Condicao == PecaBehaviourScript.CondicaoEspecial.FORTE) {
+				//pecasFortes.Add (_peca);
+				_qtdPecasFortes--;
+				_peca.TornarNormal (); // deixa a peca normal
+			}
+
+
+		}
+
+		//remove as pecas fortes
+		pecasList.RemoveAll (_peca => {
+			return peca.Condicao == PecaBehaviourScript.CondicaoEspecial.FORTE;
+		});
+
+		pecasList.Add (peca);
+		_Tabuleiro.Remover (pecasList);
+		Pontuar (QtdPecasParaPontos);
+	}
+
+	//configura a ajuda para remover tipo
+	public void RemoverTipo(){
+
+		// verific se ainda tem chances
+		// -- remover comentario if( AjudasHelper.RemoverTipo() <= 0 & _jogando) return;
+
+		AjudasHelper.RemoverTipo (-1);
+
+		_removerTipo = true;
+		_removerQuadrante = false;
+
+		InformacaoAjudaUI.dica.text = "Selecione uma cor.";
+		InformacaoAjudaUI.Entrar ();
+
+	}
+
+	private void RemoverTipo(PecaBehaviourScript peca){
+		int QtdPecasParaPontos = 0;
+		int tipo = peca.id; // peca o id da peca principal
+
+		List<PecaBehaviourScript> pecasList = new List<PecaBehaviourScript> ();
+
+		// varre o tabuleiro
+		for (int x = 0; x < _colunas; x++) {
+
+			for (int y = 0; y < _linhas; y++) {
+
+				if (tipo == _Tabuleiro.Tabuleiro [x, y].id & 
+					_Tabuleiro.Tabuleiro [x, y].Condicao != PecaBehaviourScript.CondicaoEspecial.NEGRA) {
+
+					pecasList.Add (_Tabuleiro.Tabuleiro [x, y]);
+					QtdPecasParaPontos++;
+
+				}
+
+			}
+		}
+
+		// lista que vai armazenar as pecas do tipo forte
+		List<PecaBehaviourScript> pecasFortes = new List<PecaBehaviourScript> ();
+		int indexPeca = 0;
+		for (int i = 0; i < pecasList.Count; i++) {
+
+			ParticleSystem particula = _particulasDeSaida [i];
+			particula.gameObject.SetActive (false);
+
+
+			PecaBehaviourScript _peca = pecasList [indexPeca];
+
+			particula.transform.position = _peca.transform.position;
+			particula.startColor = _peca.cor;
+			particula.gameObject.SetActive (true);
+			indexPeca++;
+			// verifica se a peca é forte
+			if (_peca.Condicao == PecaBehaviourScript.CondicaoEspecial.FORTE) {
+				//pecasFortes.Add (_peca);
+				_qtdPecasFortes--;
+				_peca.TornarNormal (); // deixa a peca normal
+			}
+		}
+		//remove as pecas fortes
+		pecasList.RemoveAll (_peca => {
+			return peca.Condicao == PecaBehaviourScript.CondicaoEspecial.FORTE;
+		});
+
+		pecasList.Add (peca);
+		_Tabuleiro.Remover (pecasList);
+		Pontuar (QtdPecasParaPontos);
+
+
+	}
+
     // usa a ajuda do tipo misturar
     public void Misturar()
     {
         // verifica se ainda existem ajudas para ser usadas
-        if (AjudasHelper.Misturar() > 0)
+		if (AjudasHelper.Misturar() <= 0 & _jogando)
         {
+
+			InformacaoAjudaUI.dica.text = "Misturando o tabuleiro!!";
+			InformacaoAjudaUI.Entrar ();
+
             // remove uma ajuda
             AjudasHelper.Misturar(-1);
             // executa a animação 
@@ -852,7 +1047,11 @@ public class LevelBehaviourScript : MonoBehaviour
 	public void MaisCinco()
 	{
 		// verific se ainda tem chances
-		if( AjudasHelper.MaisCinco() <= 0) return;
+		if( AjudasHelper.MaisCinco() <= 0 & _jogando) return;
+
+		InformacaoAjudaUI.dica.text = "Mais 5 movimentos para você.";
+		InformacaoAjudaUI.Entrar ();
+
 		// remove uma chance
 		AjudasHelper.MaisCinco(-1);
 		// executa a animação
@@ -870,7 +1069,30 @@ public class LevelBehaviourScript : MonoBehaviour
 
 	}
 		
+	// carreca p ŕefab da dica forte
+	private void CarregaPreDicaForte(){
 
+		this.preDica = Resources.Load<PreDicaBehaviourScritp> ("Prefabs/PreDicaPecasFortes") 
+			as PreDicaBehaviourScritp;
+		this.preDica = Instantiate (preDica) as PreDicaBehaviourScritp;
+
+		this.preDica.transform.parent = DicaInicial.transform.parent;
+		this.preDica.transform.localScale = new Vector3 (1,1,0);
+		this.preDica.transform.localPosition = new Vector3 (0,230,0);
+	}
+
+	// carreca prefab da dica negra
+	private void CarregaPreDicaNegra(){
+
+		this.preDica = Resources.Load<PreDicaBehaviourScritp> ("Prefabs/PreDicaPecasNegras")
+			as PreDicaBehaviourScritp;
+		this.preDica = Instantiate (preDica) as PreDicaBehaviourScritp;
+		this.preDica.gameObject.SetActive (true);
+
+		this.preDica.transform.parent = DicaInicial.transform.parent;
+		this.preDica.transform.localScale = new Vector3 (1,1,0);
+		this.preDica.transform.localPosition = new Vector3 (0,230,0);
+	}
 
     // antes de destruir o nivel
     public void OnDestroy()
